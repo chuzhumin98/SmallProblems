@@ -42,4 +42,12 @@ public class ClusterEntry {
 		string += " cluster:"+this.cluster;
 		return string;
 	}
+	
+	/*
+	 * 返回一个串，没有任何解释信息的，便于将结果输出到文件中
+	 */
+	public String toSimpleString() {
+		String string = X+" "+Y+" "+this.cluster;
+		return string;
+	}
 }

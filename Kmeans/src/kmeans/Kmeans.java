@@ -2,6 +2,7 @@ package kmeans;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -44,13 +45,34 @@ public class Kmeans {
 			}
 			System.out.println("sample size: " + this.samples.size());
 			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/*
+	 * 获取现在各类别的信息 
+	 */
+	public void queryClusterInfo() {
+		System.out.println("following are the center of each cluster:");
+		for (int i = 0; i < this.clusterNum; i++) {
+			String string = "cluster "+i+": ";
+			string += "("+this.clusters[i].X+","+this.clusters[i].Y+")";
+			System.out.println(string);
+		}
+	}
+	
+	/*
+	 * 将聚类的过程输出到文件中
+	 */
+	public void outputProceed(PrintStream out) {
+		
+	}
+	
 	public static void main(String[] args) {
 		Kmeans km = new Kmeans(3);
 		km.importData("import/sample1.txt");
+		km.queryClusterInfo();
 	}
 }
