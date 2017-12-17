@@ -1,9 +1,10 @@
 [info] = textread('forsample1.txt');
 clusterNum = 3;
-size = 9;
 colors = ['k^';'r^';'g^';'b^']; % 分别是未聚类点，第1-3类的颜色 
 clusterColor = ['rs';'gs';'bs']; % 各聚类类别中心的点
-for (k = 1:1) 
+[row, column] = size(info);
+Kmax = row / 12;
+for (k = 1:Kmax) 
     for (i = k*12-11:k*12-3)
         type = info(i,3) + 2;
         if (k == 1) 
@@ -17,7 +18,8 @@ for (k = 1:1)
         hold on
     end
     for (i = k*12-2:k*12)
-        scatter(info(i,1),info(i,2),70,clusterColor(i - 9,:),'filled');
+        type = i-k*12+3;
+        scatter(info(i,1),info(i,2),70,clusterColor(type,:),'filled');
         hold on
     end
     xlim([0.5,5.5])
@@ -29,4 +31,5 @@ for (k = 1:1)
     box on
     file = strcat('img/sample1Process=',num2str(k),'.png');
     saveas(gcf,file);
+    figure
 end

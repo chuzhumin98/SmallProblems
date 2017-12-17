@@ -58,6 +58,56 @@ public class Kmeans {
 	public void doKmeans(String path) throws FileNotFoundException {
 		PrintStream out = new PrintStream(new File(path));
 		this.outputProceed(out);
+		while (true) {
+			boolean hasChanged = false; //记录该轮聚类中是否发生变化
+			/*
+			 * 重新判断分类
+			 */
+			for (ClusterEntry item: this.samples) {
+				double minDist = Double.MAX_VALUE;
+				int minIndex = 0;
+				for (int i = 0; i < this.clusterNum; i++) {
+					double myDist = item.getDistance(this.clusters[i]);
+					if (myDist < minDist) {
+						minDist = myDist;
+						minIndex = i;
+					}
+				}
+				if (item.cluster != minIndex) {
+					hasChanged = true;
+				}
+				item.cluster = minIndex;
+			}
+			/*
+			 * 重新计算各聚类中心
+			 */
+			for (int i = 0; i < this.clusterNum; i++) {
+				this.clusters[i].X = 0;
+				this.clusters[i].Y = 0;
+				int countNum = 0; //记录有多少元素在此类
+				for (ClusterEntry item: this.samples) {
+					if (item.cluster == i) {
+						this.clusters[i].X += item.X;
+						this.clusters[i].Y += item.Y;
+						countNum++;
+					}
+				}
+				if (countNum == 0) {
+					countNum++; //避免发生除0的情况
+				}
+				this.clusters[i].X /= (double)countNum;
+				this.clusters[i].Y /= (double)countNum;
+			}
+			this.outputProceed(out); //并将这次结果输出到文件中
+			
+			/*
+			 * 观察是否满足判停条件
+			 */
+			if (!hasChanged) {
+				break;
+			}
+			
+		}
 	}
 	
 	/*
