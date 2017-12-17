@@ -57,7 +57,10 @@ public class Kmeans {
 	 */
 	public void doKmeans(String path) throws FileNotFoundException {
 		PrintStream out = new PrintStream(new File(path));
-		this.outputProceed(out);
+		int count = 1; //进行的迭代次数
+		System.out.println("center of process "+count);
+		this.queryClusterInfo();
+		this.outputProceed(out); 
 		while (true) {
 			boolean hasChanged = false; //记录该轮聚类中是否发生变化
 			/*
@@ -98,6 +101,8 @@ public class Kmeans {
 				this.clusters[i].X /= (double)countNum;
 				this.clusters[i].Y /= (double)countNum;
 			}
+			count++;
+			System.out.println("center of process "+count);
 			this.queryClusterInfo();
 			this.outputProceed(out); //并将这次结果输出到文件中
 			
@@ -138,7 +143,6 @@ public class Kmeans {
 	public static void main(String[] args) throws FileNotFoundException {
 		Kmeans km = new Kmeans(3);
 		km.importData("import/sample2.txt");
-		km.queryClusterInfo();
 		km.doKmeans("output/forsample2.txt");
 	}
 }
