@@ -1,0 +1,4 @@
+# ignore these types of file
+Kmeans/output/*.txt
+Kmeans/output/*.png
+Kmeans/output/*.asv

@@ -79,6 +79,9 @@ public class Kmeans {
 		for (ClusterEntry item: this.samples) {
 			out.println(item.toSimpleString());
 		}
+		for (int i = 0; i < this.clusterNum; i++) {
+			out.println(this.clusters[i].toSimpleString());
+		}
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
