@@ -98,6 +98,7 @@ public class Kmeans {
 				this.clusters[i].X /= (double)countNum;
 				this.clusters[i].Y /= (double)countNum;
 			}
+			this.queryClusterInfo();
 			this.outputProceed(out); //并将这次结果输出到文件中
 			
 			/*
@@ -136,8 +137,8 @@ public class Kmeans {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		Kmeans km = new Kmeans(3);
-		km.importData("import/sample1.txt");
+		km.importData("import/sample2.txt");
 		km.queryClusterInfo();
-		km.doKmeans("output/forsample1.txt");
+		km.doKmeans("output/forsample2.txt");
 	}
 }
