@@ -1,6 +1,7 @@
 package kmeans;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -52,6 +53,14 @@ public class Kmeans {
 	}
 	
 	/*
+	 * 进行K-means操作,并将计算过程写入文件中
+	 */
+	public void doKmeans(String path) throws FileNotFoundException {
+		PrintStream out = new PrintStream(new File(path));
+		this.outputProceed(out);
+	}
+	
+	/*
 	 * 获取现在各类别的信息 
 	 */
 	public void queryClusterInfo() {
@@ -67,12 +76,15 @@ public class Kmeans {
 	 * 将聚类的过程输出到文件中
 	 */
 	public void outputProceed(PrintStream out) {
-		
+		for (ClusterEntry item: this.samples) {
+			out.println(item.toSimpleString());
+		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		Kmeans km = new Kmeans(3);
 		km.importData("import/sample1.txt");
 		km.queryClusterInfo();
+		km.doKmeans("output/forsample1.txt");
 	}
 }
