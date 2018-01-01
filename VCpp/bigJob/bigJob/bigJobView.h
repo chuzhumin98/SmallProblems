@@ -42,9 +42,18 @@ protected:
 	afx_msg void OnFilePrintPreview();
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnOperFontChange(UINT nID);
+	afx_msg void OnUpdateOperFontChange(CCmdUI * pCmdUI);
+
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnOperDraw();
+
+public:
+	CString	m_strShow;	  // 显示的内容
+
+	afx_msg void OnOperInput();
+	int m_nFontIndex;
 };
 
 #ifndef _DEBUG  // bigJobView.cpp 中的调试版本

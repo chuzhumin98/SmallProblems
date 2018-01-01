@@ -230,6 +230,13 @@ BEGIN
     POPUP "操作"
     BEGIN
         MENUITEM "绘制曲线",                        ID_OPER_DRAW
+        MENUITEM "字符串输入",                       ID_OPER_INPUT
+        POPUP "字体大小"
+        BEGIN
+            MENUITEM "大号字",                         ID_OPER_LARGE
+            MENUITEM "中号字",                         ID_OPER_MIDDLE
+            MENUITEM "小号字",                         ID_OPER_SMALL
+        END
     END
 END
 
@@ -360,6 +367,17 @@ BEGIN
     CONTROL         "",IDC_SPIN_B,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,77,139,10,14
 END
 
+IDD_DIALOG_INPUT DIALOGEX 0, 0, 309, 165
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "字符串输入界面"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,37,138,50,14
+    PUSHBUTTON      "取消",IDCANCEL,217,138,50,14
+    EDITTEXT        IDC_EDIT_INPUT,37,62,228,59,ES_AUTOHSCROLL
+    LTEXT           "请输入新的字符串：",IDC_STATIC,38,41,88,13
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -422,6 +440,14 @@ BEGIN
         RIGHTMARGIN, 442
         TOPMARGIN, 7
         BOTTOMMARGIN, 212
+    END
+
+    IDD_DIALOG_INPUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 158
     END
 END
 #endif    // APSTUDIO_INVOKED

@@ -86,6 +86,7 @@
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDD_DIALOG_PLOTCURVE            310
+#define IDD_DIALOG_INPUT                311
 #define IDC_RADIO_Q1                    1000
 #define IDC_RADIO_Q2                    1001
 #define IDC_RADIO_Q3                    1002
@@ -98,17 +99,27 @@
 #define IDC_STATIC_R4                   1009
 #define IDC_SPIN_B                      1011
 #define IDC_STATIC_R5                   1012
+#define IDC_EDIT_INPUT                  1012
 #define IDC_EDIT_B                      1013
 #define ID_32771                        32771
 #define ID_OPER_DRAW                    32772
+#define ID_32773                        32773
+#define ID_OPER_INPUT                   32774
+#define ID_32775                        32775
+#define ID_32776                        32776
+#define ID_32777                        32777
+#define ID_32778                        32778
+#define ID_OPER_LARGE                   32779
+#define ID_OPER_MIDDLE                  32780
+#define ID_OPER_SMALL                   32781
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        311
-#define _APS_NEXT_COMMAND_VALUE         32773
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_RESOURCE_VALUE        313
+#define _APS_NEXT_COMMAND_VALUE         32782
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

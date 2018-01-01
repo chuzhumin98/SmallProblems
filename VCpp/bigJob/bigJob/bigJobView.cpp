@@ -1,10 +1,10 @@
-
-// bigJobView.cpp : CbigJobView ÀàµÄÊµÏÖ
+ï»¿
+// bigJobView.cpp : CbigJobView ç±»çš„å®žçŽ°
 //
 
 #include "stdafx.h"
-// SHARED_HANDLERS ¿ÉÒÔÔÚÊµÏÖÔ¤ÀÀ¡¢ËõÂÔÍ¼ºÍËÑË÷É¸Ñ¡Æ÷¾ä±úµÄ
-// ATL ÏîÄ¿ÖÐ½øÐÐ¶¨Òå£¬²¢ÔÊÐíÓë¸ÃÏîÄ¿¹²ÏíÎÄµµ´úÂë¡£
+// SHARED_HANDLERS å¯ä»¥åœ¨å®žçŽ°é¢„è§ˆã€ç¼©ç•¥å›¾å’Œæœç´¢ç­›é€‰å™¨å¥æŸ„çš„
+// ATL é¡¹ç›®ä¸­è¿›è¡Œå®šä¹‰ï¼Œå¹¶å…è®¸ä¸Žè¯¥é¡¹ç›®å…±äº«æ–‡æ¡£ä»£ç ã€‚
 #ifndef SHARED_HANDLERS
 #include "bigJob.h"
 #include "plotcurve.h"
@@ -12,6 +12,8 @@
 
 #include "bigJobDoc.h"
 #include "bigJobView.h"
+#include "stringInputDlg.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,20 +25,31 @@
 IMPLEMENT_DYNCREATE(CbigJobView, CView)
 
 BEGIN_MESSAGE_MAP(CbigJobView, CView)
-	// ±ê×¼´òÓ¡ÃüÁî
+	// æ ‡å‡†æ‰“å°å‘½ä»¤
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CbigJobView::OnFilePrintPreview)
 	ON_WM_CONTEXTMENU()
 	ON_WM_RBUTTONUP()
 	ON_COMMAND(ID_OPER_DRAW, &CbigJobView::OnOperDraw)
+	ON_COMMAND(ID_OPER_INPUT, &CbigJobView::OnOperInput)
+	ON_COMMAND_RANGE(ID_OPER_LARGE,ID_OPER_SMALL,OnOperFontChange)	
+		//å­—ä½“å¤§å°å˜åŒ–çš„æ¶ˆæ¯å¤„ç†å‡½æ•°
+	ON_UPDATE_COMMAND_UI_RANGE(ID_OPER_LARGE,ID_OPER_SMALL,OnUpdateOperFontChange)
+		//å­—ä½“å¤§å°å˜åŒ–æ—¶èœå•å­é¡¹å˜åŒ–çš„æ¶ˆæ¯å¤„ç†å‡½æ•°
+
+
 END_MESSAGE_MAP()
 
-// CbigJobView ¹¹Ôì/Îö¹¹
+// CbigJobView æž„é€ /æžæž„
 
 CbigJobView::CbigJobView()
+	: m_nFontIndex(1)
 {
-	// TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë
+	// TODO: åœ¨æ­¤å¤„æ·»åŠ æž„é€ ä»£ç 
+	//é»˜è®¤é‡‡ç”¨äº†ä¸­ç­‰å­—å·
+	m_strShow =L"Visual C++å¾ˆå®¹æ˜“å­¦ï¼";
+
 
 }
 
@@ -46,26 +59,51 @@ CbigJobView::~CbigJobView()
 
 BOOL CbigJobView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: ÔÚ´Ë´¦Í¨¹ýÐÞ¸Ä
-	//  CREATESTRUCT cs À´ÐÞ¸Ä´°¿ÚÀà»òÑùÊ½
+	// TODO: åœ¨æ­¤å¤„é€šè¿‡ä¿®æ”¹
+	//  CREATESTRUCT cs æ¥ä¿®æ”¹çª—å£ç±»æˆ–æ ·å¼
 
 	return CView::PreCreateWindow(cs);
 }
 
-// CbigJobView »æÖÆ
+// CbigJobView ç»˜åˆ¶
 
-void CbigJobView::OnDraw(CDC* /*pDC*/)
+void CbigJobView::OnDraw(CDC* pDC)
 {
 	CbigJobDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
 
-	// TODO: ÔÚ´Ë´¦Îª±¾»úÊý¾ÝÌí¼Ó»æÖÆ´úÂë
+	// TODO: åœ¨æ­¤å¤„ä¸ºæœ¬æœºæ•°æ®æ·»åŠ ç»˜åˆ¶ä»£ç 
+	int fontSize = 10;
+	if (this->m_nFontIndex == 1) {
+		fontSize = 25;
+	} else if (this->m_nFontIndex == 0) {
+		fontSize = 50;
+	}
+	HFONT hfont =CreateFont			//åˆ›å»ºè‡ªå®šä¹‰å­—ä½“
+		(fontSize,		//å­—ä½“çš„é«˜åº¦
+		 0,		//ç”±ç³»ç»Ÿæ ¹æ®é«˜å®½æ¯”é€‰å–å­—ä½“æœ€ä½³å®½åº¦å€¼
+		 0,		//æ–‡æœ¬çš„å€¾æ–œåº¦ä¸º0ï¼Œè¡¨ç¤ºæ°´å¹³Â 
+		 0,		//å­—ä½“ä¸ŽåŸºçº¿çš„å€¾æ–œåº¦ä¸º0ï¼ŒÂ è¡¨ç¤ºä¸ŽåŸºçº¿å¹³è¡Œ
+		 FW_HEAVY,		//å­—ä½“çš„ç²—åº¦ï¼ŒFW_HEAVYä¸ºæœ€ç²—
+		 0,			//éžæ–œä½“å­—
+		 0,			//æ— ä¸‹åˆ’çº¿
+		 0,			//æ— åˆ é™¤çº¿
+		 GB2312_CHARSET,	//è¡¨ç¤ºæ‰€ç”¨çš„å­—ç¬¦é›†ä¸ºANSI_CHARSET
+		 OUT_DEFAULT_PRECIS,		//è¾“å‡ºç²¾åº¦ä¸ºé»˜è®¤ç²¾åº¦
+		 CLIP_DEFAULT_PRECIS,		//å‰ªè£ç²¾åº¦ä¸ºé»˜è®¤ç²¾åº¦
+		 DEFAULT_QUALITY,		//è¾“å‡ºè´¨é‡ä¸ºé»˜è®¤å€¼
+		 DEFAULT_PITCH|FF_DONTCARE,	//å­—é—´è·å’Œå­—ä½“ç³»åˆ—ä½¿ç”¨é»˜è®¤å€¼
+		 L"ç²—ä½“å­—"			//å­—ä½“åç§°
+		);
+	pDC->SelectObject(hfont);
+	pDC->TextOut(100,100,m_strShow);   // è¾“å‡ºå­—ç¬¦ä¸²
+
 }
 
 
-// CbigJobView ´òÓ¡
+// CbigJobView æ‰“å°
 
 
 void CbigJobView::OnFilePrintPreview()
@@ -77,18 +115,18 @@ void CbigJobView::OnFilePrintPreview()
 
 BOOL CbigJobView::OnPreparePrinting(CPrintInfo* pInfo)
 {
-	// Ä¬ÈÏ×¼±¸
+	// é»˜è®¤å‡†å¤‡
 	return DoPreparePrinting(pInfo);
 }
 
 void CbigJobView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: Ìí¼Ó¶îÍâµÄ´òÓ¡Ç°½øÐÐµÄ³õÊ¼»¯¹ý³Ì
+	// TODO: æ·»åŠ é¢å¤–çš„æ‰“å°å‰è¿›è¡Œçš„åˆå§‹åŒ–è¿‡ç¨‹
 }
 
 void CbigJobView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: Ìí¼Ó´òÓ¡ºó½øÐÐµÄÇåÀí¹ý³Ì
+	// TODO: æ·»åŠ æ‰“å°åŽè¿›è¡Œçš„æ¸…ç†è¿‡ç¨‹
 }
 
 void CbigJobView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -105,7 +143,7 @@ void CbigJobView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
 }
 
 
-// CbigJobView Õï¶Ï
+// CbigJobView è¯Šæ–­
 
 #ifdef _DEBUG
 void CbigJobView::AssertValid() const
@@ -118,7 +156,7 @@ void CbigJobView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
-CbigJobDoc* CbigJobView::GetDocument() const // ·Çµ÷ÊÔ°æ±¾ÊÇÄÚÁªµÄ
+CbigJobDoc* CbigJobView::GetDocument() const // éžè°ƒè¯•ç‰ˆæœ¬æ˜¯å†…è”çš„
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CbigJobDoc)));
 	return (CbigJobDoc*)m_pDocument;
@@ -126,12 +164,34 @@ CbigJobDoc* CbigJobView::GetDocument() const // ·Çµ÷ÊÔ°æ±¾ÊÇÄÚÁªµÄ
 #endif //_DEBUG
 
 
-// CbigJobView ÏûÏ¢´¦Àí³ÌÐò
+// CbigJobView æ¶ˆæ¯å¤„ç†ç¨‹åº
 
 
 void CbigJobView::OnOperDraw()
 {
-	// TODO: ÔÚ´ËÌí¼ÓÃüÁî´¦Àí³ÌÐò´úÂë
-	plotcurve myPlot; //ÐÂ½¨Ò»¸ö¶Ô»°¿ò¶ÔÏó
-	myPlot.DoModal(); //´ò¿ªÕâ¸ö¶Ô»°¿ò
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
+	plotcurve myPlot; //æ–°å»ºä¸€ä¸ªå¯¹è¯æ¡†å¯¹è±¡
+	myPlot.DoModal(); //æ‰“å¼€è¿™ä¸ªå¯¹è¯æ¡†
+}
+
+
+void CbigJobView::OnOperInput()
+{
+	// TODO: åœ¨æ­¤æ·»åŠ å‘½ä»¤å¤„ç†ç¨‹åºä»£ç 
+	stringInputDlg dlgInput;	// å£°æ˜Žå¯¹è¯æ¡†å˜é‡
+	if(dlgInput.DoModal() == IDOK) // è‹¥ç‚¹å‡»OKæŒ‰é’®
+    {	
+		m_strShow = dlgInput.m_strInput;	// æ›´æ”¹å­—ç¬¦ä¸²
+		Invalidate();	                		// å¼ºåˆ¶é‡ç»˜
+    }
+
+}
+
+afx_msg void CbigJobView::OnOperFontChange(UINT nID) {
+	m_nFontIndex = nID-ID_OPER_LARGE;
+	Invalidate(); 
+}
+
+afx_msg void CbigJobView::OnUpdateOperFontChange(CCmdUI * pCmdUI) {
+	pCmdUI->SetRadio(m_nFontIndex==(pCmdUI->m_nID - ID_OPER_LARGE));
 }
