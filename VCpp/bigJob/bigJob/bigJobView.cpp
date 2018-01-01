@@ -13,6 +13,7 @@
 #include "bigJobDoc.h"
 #include "bigJobView.h"
 #include "stringInputDlg.h"
+#include "MediaPlayDlg.h"
 
 
 #ifdef _DEBUG
@@ -174,6 +175,8 @@ CbigJobDoc* CbigJobView::GetDocument() const // 非调试版本是内联的
 void CbigJobView::OnOperDraw()
 {
 	// TODO: 在此添加命令处理程序代码
+	MediaPlayDlg media;
+	media.DoModal();
 	plotcurve myPlot; //新建一个对话框对象
 	myPlot.DoModal(); //打开这个对话框
 }

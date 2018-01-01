@@ -10,6 +10,7 @@
 
 #include "bigJobDoc.h"
 #include "bigJobView.h"
+#include "CWMPPlayer4.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

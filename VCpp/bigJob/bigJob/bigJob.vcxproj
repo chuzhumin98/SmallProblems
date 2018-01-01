@@ -105,8 +105,10 @@
     <ClInclude Include="bigJobDoc.h" />
     <ClInclude Include="bigJobView.h" />
     <ClInclude Include="ClassView.h" />
+    <ClInclude Include="CWMPPlayer4.h" />
     <ClInclude Include="FileView.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MediaPlayDlg.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="plotcurve.h" />
     <ClInclude Include="PropertiesWnd.h" />
@@ -121,8 +123,10 @@
     <ClCompile Include="bigJobDoc.cpp" />
     <ClCompile Include="bigJobView.cpp" />
     <ClCompile Include="ClassView.cpp" />
+    <ClCompile Include="CWMPPlayer4.cpp" />
     <ClCompile Include="FileView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MediaPlayDlg.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="plotcurve.cpp" />
     <ClCompile Include="PropertiesWnd.cpp" />
@@ -172,7 +176,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="bigJob.rc" />
+      <UserProperties RESOURCE_FILE="bigJob.rc" _x007B_6BF52A52-394A-11D3-B153-00C04F79FAA6_x007D_="CWMPPlayer4" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
