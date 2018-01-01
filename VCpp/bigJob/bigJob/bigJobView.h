@@ -54,6 +54,11 @@ public:
 
 	afx_msg void OnOperInput();
 	int m_nFontIndex;
+
+public:
+	CMenu    m_PopMenu;	 // Pop-up快捷菜单
+	CMenu*   m_pPop;	 // Pop-up快捷子菜单
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // bigJobView.cpp 中的调试版本

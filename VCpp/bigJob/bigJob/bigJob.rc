@@ -303,6 +303,19 @@ BEGIN
     MENUITEM "Windows 7(&D)",               ID_VIEW_APPLOOK_WINDOWS_7
 END
 
+IDR_POP_SHOW MENU
+BEGIN
+    POPUP "POP"
+    BEGIN
+        POPUP "字体大小"
+        BEGIN
+            MENUITEM "大号字",                         ID_OPER_LARGE
+            MENUITEM "中号字",                         ID_OPER_MIDDLE
+            MENUITEM "小号字",                         ID_OPER_SMALL
+        END
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

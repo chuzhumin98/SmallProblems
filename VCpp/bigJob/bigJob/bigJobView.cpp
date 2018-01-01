@@ -39,6 +39,8 @@ BEGIN_MESSAGE_MAP(CbigJobView, CView)
 		//字体大小变化时菜单子项变化的消息处理函数
 
 
+
+		ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CbigJobView 构造/析构
@@ -49,12 +51,14 @@ CbigJobView::CbigJobView()
 	// TODO: 在此处添加构造代码
 	//默认采用了中等字号
 	m_strShow =L"Visual C++很容易学！";
+	m_PopMenu.LoadMenu(IDR_POP_SHOW);  	// 创建并加载菜单资源
 
 
 }
 
 CbigJobView::~CbigJobView()
 {
+	m_PopMenu.DestroyMenu();              // 释放菜单资源    
 }
 
 BOOL CbigJobView::PreCreateWindow(CREATESTRUCT& cs)
@@ -132,7 +136,7 @@ void CbigJobView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 void CbigJobView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
 	ClientToScreen(&point);
-	OnContextMenu(this, point);
+	//OnContextMenu(this, point);
 }
 
 void CbigJobView::OnContextMenu(CWnd* /* pWnd */, CPoint point)
@@ -194,4 +198,18 @@ afx_msg void CbigJobView::OnOperFontChange(UINT nID) {
 
 afx_msg void CbigJobView::OnUpdateOperFontChange(CCmdUI * pCmdUI) {
 	pCmdUI->SetRadio(m_nFontIndex==(pCmdUI->m_nID - ID_OPER_LARGE));
+}
+
+void CbigJobView::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	m_pPop = m_PopMenu.GetSubMenu(0);    // 获得第一个子菜单
+	m_pPop->CheckMenuRadioItem(ID_OPER_LARGE,
+            ID_OPER_SMALL,ID_OPER_LARGE+m_nFontIndex,
+            MF_BYCOMMAND);//在颜色菜单项上加上选中标识
+	ClientToScreen(&point); 	// 将坐标由客户坐标转化为屏幕坐标
+	m_pPop->TrackPopupMenu(TPM_LEFTALIGN, point.x,point.y,this);//显示Pop-up菜单
+
+
+	//CView::OnRButtonDown(nFlags, point); //禁用默认响应
 }

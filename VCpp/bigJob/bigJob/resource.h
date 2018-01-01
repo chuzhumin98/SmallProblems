@@ -87,6 +87,7 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_DIALOG_PLOTCURVE            310
 #define IDD_DIALOG_INPUT                311
+#define IDR_POP_SHOW                    313
 #define IDC_RADIO_Q1                    1000
 #define IDC_RADIO_Q2                    1001
 #define IDC_RADIO_Q3                    1002
@@ -112,13 +113,17 @@
 #define ID_OPER_LARGE                   32779
 #define ID_OPER_MIDDLE                  32780
 #define ID_OPER_SMALL                   32781
+#define ID_POP_32782                    32782
+#define ID_32783                        32783
+#define ID_32784                        32784
+#define ID_32785                        32785
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        313
-#define _APS_NEXT_COMMAND_VALUE         32782
+#define _APS_NEXT_RESOURCE_VALUE        314
+#define _APS_NEXT_COMMAND_VALUE         32786
 #define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

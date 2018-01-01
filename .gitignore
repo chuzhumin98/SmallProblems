@@ -3,3 +3,7 @@ Kmeans/output/*.txt
 Kmeans/output/*.png
 Kmeans/output/*.asv
 Kmeans/output/img/
+VCpp/bigJob/Debug/
+VCpp/bigJob/ipch/
+VCpp/bigJob/bigJob.sdf
+VCpp/bigJob/bigJob/Debug/
