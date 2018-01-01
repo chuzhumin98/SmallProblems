@@ -102,6 +102,7 @@ IDR_MENU_IMAGES         BITMAP                  "res\\menuimages.bmp"
 IDB_MENU_IMAGES_24      BITMAP                  "res\\menuimages_hc.bmp"
 IDR_PROPERTIES          BITMAP                  "res\\properties.bmp"
 IDB_PROPERTIES_HC       BITMAP                  "res\\properties_hc.bmp"
+IDR_TOOLBAR_NEW         BITMAP                  "res\\toolbar1.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -166,6 +167,14 @@ BEGIN
     BUTTON      ID_SORTPROPERTIES
     BUTTON      ID_PROPERTIES1
     BUTTON      ID_PROPERTIES2
+END
+
+IDR_TOOLBAR_NEW TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_OPER_LARGE
+    SEPARATOR
+    BUTTON      ID_OPER_MIDDLE
+    BUTTON      ID_OPER_SMALL
 END
 
 
@@ -617,6 +626,13 @@ BEGIN
     IDS_BUILD_TAB           "生成"
     IDS_DEBUG_TAB           "调试"
     IDS_FIND_TAB            "查找"
+END
+
+STRINGTABLE
+BEGIN
+    ID_OPER_LARGE           "大号字"
+    ID_OPER_MIDDLE          "中号字"
+    ID_OPER_SMALL           "小号字"
 END
 
 #endif    // 中文(简体，中国) resources

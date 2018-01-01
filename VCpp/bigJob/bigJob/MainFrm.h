@@ -56,6 +56,10 @@ protected:
 
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
+
+public:
+	CMFCToolBar m_wndToolBarNew;
+
 };
 
 

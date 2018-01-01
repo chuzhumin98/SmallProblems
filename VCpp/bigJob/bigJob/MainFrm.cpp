@@ -146,6 +146,25 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// 启用菜单个性化(最近使用的命令)
 	// TODO: 定义您自己的基本命令，确保每个下拉菜单至少有一个基本命令。
+	if (!m_wndToolBarNew.CreateEx(this, TBSTYLE_FLAT, 
+          WS_CHILD | WS_VISIBLE | CBRS_TOP | 
+	     CBRS_GRIPPER | CBRS_TOOLTIPS | 
+          CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
+	!m_wndToolBarNew.LoadToolBar(IDR_TOOLBAR_NEW))
+	{	TRACE0("Failed to create toolbar\n");
+		return -1;      			// fail to create
+     }
+	m_wndToolBarNew.EnableDocking(CBRS_ALIGN_ANY); 
+	//工具条可以在父窗口内任何一边停靠
+
+	EnableDocking(CBRS_ALIGN_ANY);
+	// 父窗口允许子工具条窗口在任何一边停靠
+
+	DockPane(&m_wndToolBarNew);
+	// 父窗口内按照前面指定的风格停靠该工具条
+
+
+
 	CList<UINT, UINT> lstBasicCommands;
 
 	lstBasicCommands.AddTail(ID_FILE_NEW);
