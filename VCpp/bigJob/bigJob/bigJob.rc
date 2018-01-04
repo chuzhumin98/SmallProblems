@@ -246,6 +246,7 @@ BEGIN
             MENUITEM "中号字",                         ID_OPER_MIDDLE
             MENUITEM "小号字",                         ID_OPER_SMALL
         END
+        MENUITEM "操作演示",                        ID_OPER_MEDIASHOW
     END
 END
 
@@ -381,10 +382,10 @@ BEGIN
     SCROLLBAR       IDC_SCROLLBAR_R,39,79,140,18
     LTEXT           "255",IDC_STATIC_R,189,81,18,14
     RTEXT           "R:",IDC_STATIC_R2,15,83,20,10
-    RTEXT           "G:",IDC_STATIC_R4,13,115,20,10
+    RTEXT           "G:",IDC_STATIC_G2,13,115,20,10
     CONTROL         "",IDC_SLIDER_G,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,42,110,135,15
     EDITTEXT        IDC_EDIT_G,185,110,20,14,ES_AUTOHSCROLL | ES_READONLY
-    RTEXT           "B:",IDC_STATIC_R5,13,142,20,10
+    RTEXT           "B:",IDC_STATIC_B2,13,142,20,10
     EDITTEXT        IDC_EDIT_B,45,139,31,14,ES_AUTOHSCROLL | ES_READONLY
     CONTROL         "",IDC_SPIN_B,"msctls_updown32",UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,77,139,10,14
 END
@@ -400,14 +401,14 @@ BEGIN
     LTEXT           "请输入新的字符串：",IDC_STATIC,38,41,88,13
 END
 
-IDD_DIALOG_MEDIA DIALOGEX 0, 0, 309, 176
+IDD_DIALOG_MEDIA DIALOGEX 0, 0, 379, 235
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "录制视频展示界面"
+CAPTION "播放对话框"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "确定",IDOK,198,155,50,14
-    PUSHBUTTON      "取消",IDCANCEL,252,155,50,14
-    CONTROL         "",IDC_OCX1,"{6BF52A52-394A-11D3-B153-00C04F79FAA6}",WS_TABSTOP,23,7,266,142
+    DEFPUSHBUTTON   "确定",IDOK,253,214,50,14
+    PUSHBUTTON      "取消",IDCANCEL,322,214,50,14
+    CONTROL         "",IDC_OCX1,"{6BF52A52-394A-11D3-B153-00C04F79FAA6}",WS_TABSTOP,23,7,334,197
 END
 
 
@@ -485,9 +486,9 @@ BEGIN
     IDD_DIALOG_MEDIA, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 302
+        RIGHTMARGIN, 372
         TOPMARGIN, 7
-        BOTTOMMARGIN, 169
+        BOTTOMMARGIN, 228
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -509,11 +510,18 @@ BEGIN
 0x0000, 0x0066, 0x0075, 0x006c, 0x006c, 0x0000, 0x000b, 0x0000, 0x000b, 
 0x0000, 0x000b, 0xffff, 0x000b, 0xffff, 0x000b, 0x0000, 0x0008, 0x0002, 
 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 0x0000, 0x0008, 0x0002, 0x0000, 
-0x0000, 0x0008, 0x0002, 0x0000, 0x0000, 0x000b, 0x0000, 0x293d, 0x0000, 
-0x17e0, 0x0000, 
+0x0000, 0x0008, 0x0002, 0x0000, 0x0000, 0x000b, 0x0000, 0x33c8, 0x0000, 
+0x2113, 0x0000, 
     0
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// MP4
+//
+
+IDR_MP4_MYSHUO          MP4                     "myshuo.mp4"
 
 /////////////////////////////////////////////////////////////////////////////
 //

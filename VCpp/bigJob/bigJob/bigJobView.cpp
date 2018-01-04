@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CbigJobView, CView)
 
 
 		ON_WM_RBUTTONDOWN()
+		ON_COMMAND(ID_OPER_MEDIASHOW, &CbigJobView::OnOperMediashow)
 END_MESSAGE_MAP()
 
 // CbigJobView 构造/析构
@@ -136,7 +137,7 @@ void CbigJobView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 
 void CbigJobView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
-	ClientToScreen(&point);
+	//ClientToScreen(&point);
 	//OnContextMenu(this, point);
 }
 
@@ -175,8 +176,6 @@ CbigJobDoc* CbigJobView::GetDocument() const // 非调试版本是内联的
 void CbigJobView::OnOperDraw()
 {
 	// TODO: 在此添加命令处理程序代码
-	MediaPlayDlg media;
-	media.DoModal();
 	plotcurve myPlot; //新建一个对话框对象
 	myPlot.DoModal(); //打开这个对话框
 }
@@ -215,4 +214,12 @@ void CbigJobView::OnRButtonDown(UINT nFlags, CPoint point)
 
 
 	//CView::OnRButtonDown(nFlags, point); //禁用默认响应
+}
+
+
+void CbigJobView::OnOperMediashow()
+{
+	// TODO: 在此添加命令处理程序代码
+	MediaPlayDlg media;
+	media.DoModal();
 }

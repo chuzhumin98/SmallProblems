@@ -170,6 +170,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\bigJob.rc2" />
+    <None Include="res\mp41.bin" />
+    <None Include="res\mp42.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="myshuo.mp4" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

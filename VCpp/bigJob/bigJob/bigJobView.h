@@ -59,6 +59,7 @@ public:
 	CMenu    m_PopMenu;	 // Pop-up快捷菜单
 	CMenu*   m_pPop;	 // Pop-up快捷子菜单
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnOperMediashow();
 };
 
 #ifndef _DEBUG  // bigJobView.cpp 中的调试版本
