@@ -39,7 +39,10 @@ echo "<br />";
 echo <<<EOF
 <script language="JavaScript">
 document.write('<div id="timeShow" align="left" style="MARGIN-right:10px;font-size:16pt;font-family:等线;color:#00F"></div>');
+
 EOF;
+   
+$n = chr(13); //换行符
    
 echo "var y=".date("Y").";".$n; //记录年   
 echo "var m=".date("n").";".$n; //记录月  
