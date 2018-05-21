@@ -79,7 +79,7 @@ public class ChatServerThread extends Thread{
 							os.write(response.getBytes("US-ASCII"));
 							System.out.println("succeed to send response "+response+" to "+this.username+"!");
 						} else {
-							String response = targetIP+":"+targetPort;
+							String response = targetIP;
 							os.write(response.getBytes("US-ASCII"));
 							System.out.println("succeed to send response "+response+" to "+this.username+"!");
 						}
@@ -87,7 +87,7 @@ public class ChatServerThread extends Thread{
 				}
 				if (command.length() >= 16) {
 					if (command.substring(0, 6).equals("logout")) {
-						String logoutResponse = "loo\r\n";
+						String logoutResponse = "loo";
 						os.write(logoutResponse.getBytes("US-ASCII"));
 						System.out.println("succeed to send logout response to "+this.username+"!");
 						break;
