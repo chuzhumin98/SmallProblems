@@ -40,8 +40,7 @@ public class ChatMultiServer {
 	            Socket socketServer = ssocketWelcome.accept();
 	            ChatMultiServer.clientNum++; //增加了一个用户
 	            ChatServerThread thread = new ChatServerThread(socketServer);
-	            thread.start();
-	            
+	            thread.start();	            
 	        }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
