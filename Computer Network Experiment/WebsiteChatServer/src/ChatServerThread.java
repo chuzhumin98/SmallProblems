@@ -41,19 +41,29 @@ public class ChatServerThread extends Thread{
 				//判断是否满足登录的语法要求，如果满足则回复"lol"
 				if (command.length() >= 18) {
 					this.username = command.substring(0, 10);
-					UserInfo thisUser = new UserInfo(this.IP, this.port, this.username); //新建一个用户到用户表中
-					ChatMultiServer.users.add(thisUser);
+					boolean existUser = false; //判断这个学号是否合法
+					for (int i = 0; i < ChatMultiServer.validIDs.size(); i++) {
+						if (ChatMultiServer.validIDs.get(i).equals(this.username)) {
+							existUser = true;
+							break;
+						}
+					}
 					String subCommand = command.substring(10, 18);
-					if (subCommand.equals("_net2018")) {
+					if (existUser && subCommand.equals("_net2018")) {
+						UserInfo thisUser = new UserInfo(this.IP, this.port, this.username); //新建一个用户到用户表中
+						ChatMultiServer.users.add(thisUser);
 						String loginResponse = "lol";
 						os.write(loginResponse.getBytes("US-ASCII"));
 						System.out.println("succeed to send login response to "+this.username+"!");
 						break;
 					}
 				}
+				String loginFailResponse = "invalid login";
+				os.write(loginFailResponse.getBytes("US-ASCII"));
 			}
 			/** 查询和登出操作 */
 			while (true) {
+				boolean validOperation = false; //记录本轮操作是否合法
 				char[] responseBuffer = new char[20];
 				int flag = br.read(responseBuffer);
 				if (flag == -1) {
@@ -67,18 +77,26 @@ public class ChatServerThread extends Thread{
 						System.out.println(this.username+" has queried for "+queryUserName);
 						//找到查看好友是否在线
 						String targetIP = "";
-						int targetPort = -1;
+						int targetPort = -2;
 						for (UserInfo item: ChatMultiServer.users) {
 							if (item.username.equals(queryUserName)) {
 								targetIP = item.IP;
 								targetPort = item.port;
 							}
 						}
+						for (int i = 0; i < ChatMultiServer.validIDs.size(); i++) {
+							if (ChatMultiServer.validIDs.get(i).equals(this.username)) {
+								targetPort = -1; //如果这个查询的学号合法，则返回n，否则则返回非法输入
+								break;
+							}
+						}
 						if (targetPort == -1) {
+							validOperation = true;
 							String response = "n";
 							os.write(response.getBytes("US-ASCII"));
 							System.out.println("succeed to send response "+response+" to "+this.username+"!");
-						} else {
+						} else if (targetPort != -2) {
+							validOperation = true;
 							String response = targetIP;
 							os.write(response.getBytes("US-ASCII"));
 							System.out.println("succeed to send response "+response+" to "+this.username+"!");
@@ -86,12 +104,17 @@ public class ChatServerThread extends Thread{
 					}
 				}
 				if (command.length() >= 16) {
-					if (command.substring(0, 6).equals("logout")) {
+					if (command.substring(0, 6).equals("logout") && command.substring(6, 16).equals(this.username)) {
+						validOperation = true;
 						String logoutResponse = "loo";
 						os.write(logoutResponse.getBytes("US-ASCII"));
 						System.out.println("succeed to send logout response to "+this.username+"!");
 						break;
 					}
+				}
+				if (!validOperation) {
+					String loginResponse = "invalid operation";
+					os.write(loginResponse.getBytes("US-ASCII"));
 				}
 			}
 			for (int i = ChatMultiServer.users.size()-1; i >= 0; i--) {

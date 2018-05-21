@@ -17,7 +17,7 @@ public class ServerLink {
 		Socket socket;
 		try {
 			socket = new Socket(ServerLink.serverIP, ServerLink.serverPort); //新建一个socket连接对象	
-			System.out.println(socket.getInetAddress());
+			System.out.println("link server address:"+socket.getInetAddress());
 			OutputStream os = socket.getOutputStream(); //socket的输出流
 			
 			InputStream is = socket.getInputStream(); //socket的输入流
