@@ -31,6 +31,7 @@ public class ChatServerThread extends Thread{
 			OutputStream os = socket.getOutputStream(); //socket的输出流
 			/** 登录操作部分 */
 			while (true) {
+				boolean isAlreadyOnline = false; //判断该学号用户是不是已经在线
 				char[] responseBuffer = new char[20];
 				int flag = br.read(responseBuffer);
 				if (flag == -1) {
@@ -38,7 +39,6 @@ public class ChatServerThread extends Thread{
 				}
 				String command = String.valueOf(responseBuffer);
 				System.out.println("receive request:"+command);
-				System.out.println(command.length());
 				//判断是否满足登录的语法要求，如果满足则回复"lol"
 				int offset = 18; //终止的index
 				if (command.charAt(offset) == '\0' || command.charAt(offset) == '\r' || command.charAt(offset) == '\n') {
@@ -50,8 +50,17 @@ public class ChatServerThread extends Thread{
 							break;
 						}
 					}
+					System.out.println("usersize:"+ChatMultiServer.users.size());
+					for (int i = 0; i < ChatMultiServer.users.size(); i++) {
+						if (ChatMultiServer.users.get(i).username.equals(this.username)) {
+							isAlreadyOnline = true;
+							String loginFailResponse = "already login";
+							os.write(loginFailResponse.getBytes("US-ASCII"));
+							break;
+						} 
+					}
 					String subCommand = command.substring(10, 18);
-					if (existUser && subCommand.equals("_net2018")) {
+					if (existUser && !isAlreadyOnline && subCommand.equals("_net2018")) {
 						UserInfo thisUser = new UserInfo(this.IP, this.port, this.username); //新建一个用户到用户表中
 						ChatMultiServer.users.add(thisUser);
 						String loginResponse = "lol";
@@ -60,8 +69,10 @@ public class ChatServerThread extends Thread{
 						break;
 					}
 				}
-				String loginFailResponse = "invalid login";
-				os.write(loginFailResponse.getBytes("US-ASCII"));
+				if (!isAlreadyOnline) {
+					String loginFailResponse = "invalid login";
+					os.write(loginFailResponse.getBytes("US-ASCII"));
+				}
 			}
 			/** 查询和登出操作 */
 			while (true) {
@@ -121,17 +132,17 @@ public class ChatServerThread extends Thread{
 					os.write(loginResponse.getBytes("US-ASCII"));
 				}
 			}
-			for (int i = ChatMultiServer.users.size()-1; i >= 0; i--) {
-				UserInfo item = ChatMultiServer.users.get(i);
-				if (item.IP.equals(this.IP) && item.port == this.port && item.username.equals(this.username)) {
-					ChatMultiServer.users.remove(item);
-					System.out.println("has remove for user "+this.username+" online");
-				}
-			}
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //socket的输入流	
+		for (int i = ChatMultiServer.users.size()-1; i >= 0; i--) {
+			UserInfo item = ChatMultiServer.users.get(i);
+			if (item.IP.equals(this.IP) && item.port == this.port && item.username.equals(this.username)) {
+				ChatMultiServer.users.remove(item);
+				System.out.println("has remove for user "+this.username+" online");
+			}
+		}
 	}
 }

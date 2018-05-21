@@ -35,6 +35,9 @@ public class ServerLink {
 				System.err.println("cannot recieve login message from server!");
 			}
 			String loginResponse = String.valueOf(responseBuffer);
+			if (!loginResponse.substring(0,3).equals("lol")) {
+				System.err.println("invalid login command");
+			}
 			System.out.println(loginResponse);
 			
 			/** 查询好友IP */
@@ -47,8 +50,15 @@ public class ServerLink {
 			if (flag == -1) {
 				System.err.println("cannot recieve query message from server!");
 			}
+			if (loginResponse.substring(0,1).equals("n")) {
+				System.err.println("the query user isn't online");
+			}
 			String queryResponse = String.valueOf(responseBuffer);
 			System.out.println(queryResponse);
+			
+			while (true) {
+				if (1 == 0) break;
+			}
 			
 			/** 登出系统 */
 			String logoutCommand = "logout"+ServerLink.studentID;
