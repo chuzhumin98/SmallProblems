@@ -5,6 +5,7 @@ import java.net.Socket;
 public class ChatMultiServer {
 	public static int clientNum = 0; //连接用户的个数
 	
+	
 	public static void main(String[] args) {
 		ServerSocket ssocketWelcome;
 		try {
