@@ -29,9 +29,14 @@ public class ChatServerThread extends Thread{
 			BufferedReader br = new BufferedReader(isr);
 			
 			OutputStream os = socket.getOutputStream(); //socket的输出流
-	
+			/** 登录操作部分 */
 			while (true) {
-				String command = br.readLine();
+				char[] responseBuffer = new char[20];
+				int flag = br.read(responseBuffer);
+				if (flag == -1) {
+					System.err.println("cannot recieve login message from client "+this.IP+"!");
+				}
+				String command = String.valueOf(responseBuffer);
 				System.out.println("receive request:"+command);
 				//判断是否满足登录的语法要求，如果满足则回复"lol"
 				if (command.length() >= 18) {
@@ -40,21 +45,44 @@ public class ChatServerThread extends Thread{
 					ChatMultiServer.users.add(thisUser);
 					String subCommand = command.substring(10, 18);
 					if (subCommand.equals("_net2018")) {
-						String loginResponse = "lol\r\n";
+						String loginResponse = "lol";
 						os.write(loginResponse.getBytes("US-ASCII"));
 						System.out.println("succeed to send login response to "+this.username+"!");
 						break;
 					}
 				}
 			}
-			
+			/** 查询和登出操作 */
 			while (true) {
-				String command = br.readLine();
+				char[] responseBuffer = new char[20];
+				int flag = br.read(responseBuffer);
+				if (flag == -1) {
+					System.err.println("cannot recieve login message from client "+this.IP+"!");
+				}
+				String command = String.valueOf(responseBuffer);
 				System.out.println("receive request:"+command);
 				if (command.length() >= 11) {
 					if (command.charAt(0) == 'q') {
 						String queryUserName = command.substring(1, 11);
 						System.out.println(this.username+" has queried for "+queryUserName);
+						//找到查看好友是否在线
+						String targetIP = "";
+						int targetPort = -1;
+						for (UserInfo item: ChatMultiServer.users) {
+							if (item.username.equals(queryUserName)) {
+								targetIP = item.IP;
+								targetPort = item.port;
+							}
+						}
+						if (targetPort == -1) {
+							String response = "n";
+							os.write(response.getBytes("US-ASCII"));
+							System.out.println("succeed to send response "+response+" to "+this.username+"!");
+						} else {
+							String response = targetIP+":"+targetPort;
+							os.write(response.getBytes("US-ASCII"));
+							System.out.println("succeed to send response "+response+" to "+this.username+"!");
+						}
 					}
 				}
 				if (command.length() >= 16) {

@@ -24,18 +24,43 @@ public class ServerLink {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			
-			String loginCommand = ServerLink.studentID+"_net2018\r\n";
+			/** 登录系统  */
+			String loginCommand = ServerLink.studentID+"_net2018";
 			os.write(loginCommand.getBytes("US-ASCII"));
 			System.out.println("succeed to send login request!");
 			
-			String loginResponse = br.readLine();
+			char[] responseBuffer = new char[20];
+			int flag = br.read(responseBuffer);
+			if (flag == -1) {
+				System.err.println("cannot recieve login message from server!");
+			}
+			String loginResponse = String.valueOf(responseBuffer);
 			System.out.println(loginResponse);
 			
-			String logoutCommand = "logout"+ServerLink.studentID+"\r\n";
+			/** 查询好友IP */
+			String queryCommand = "q2015012177";
+			os.write(queryCommand.getBytes("US-ASCII"));
+			System.out.println("succeed to send query request!");
+			
+			responseBuffer = new char [20];
+			flag = br.read(responseBuffer);
+			if (flag == -1) {
+				System.err.println("cannot recieve query message from server!");
+			}
+			String queryResponse = String.valueOf(responseBuffer);
+			System.out.println(queryResponse);
+			
+			/** 登出系统 */
+			String logoutCommand = "logout"+ServerLink.studentID;
 			os.write(logoutCommand.getBytes("US-ASCII"));
 			System.out.println("succeed to send logout request!");
 			
-			String logoutResponse = br.readLine();
+			responseBuffer = new char [20];
+			flag = br.read(responseBuffer);
+			if (flag == -1) {
+				System.err.println("cannot recieve logout message from server!");
+			}
+			String logoutResponse = String.valueOf(responseBuffer);
 			System.out.println(logoutResponse);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
