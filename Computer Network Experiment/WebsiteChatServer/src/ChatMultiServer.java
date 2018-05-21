@@ -1,10 +1,11 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ChatMultiServer {
 	public static int clientNum = 0; //连接用户的个数
-	
+	public static ArrayList<UserInfo> users = new ArrayList<UserInfo>();
 	
 	public static void main(String[] args) {
 		ServerSocket ssocketWelcome;

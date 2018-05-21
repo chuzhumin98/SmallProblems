@@ -36,6 +36,8 @@ public class ChatServerThread extends Thread{
 				//判断是否满足登录的语法要求，如果满足则回复"lol"
 				if (command.length() >= 18) {
 					this.username = command.substring(0, 10);
+					UserInfo thisUser = new UserInfo(this.IP, this.port, this.username); //新建一个用户到用户表中
+					ChatMultiServer.users.add(thisUser);
 					String subCommand = command.substring(10, 18);
 					if (subCommand.equals("_net2018")) {
 						String loginResponse = "lol\r\n";
@@ -62,6 +64,13 @@ public class ChatServerThread extends Thread{
 						System.out.println("succeed to send logout response to "+this.username+"!");
 						break;
 					}
+				}
+			}
+			for (int i = ChatMultiServer.users.size()-1; i >= 0; i--) {
+				UserInfo item = ChatMultiServer.users.get(i);
+				if (item.IP.equals(this.IP) && item.port == this.port && item.username.equals(this.username)) {
+					ChatMultiServer.users.remove(item);
+					System.out.println("has remove for user "+this.username+" online");
 				}
 			}
 			
