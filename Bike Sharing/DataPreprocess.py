@@ -8,24 +8,49 @@ def getHour(stamp):
     hour = int(time1.split(':')[0])
     return hour
 
+# get for structured data and labels
+def getStructureData(df1):
+    size = len(df1['datetime'])
+    data = np.zeros([size, 8]) #samples data
+    for i in range(size):
+        data[i,0] = getHour(df1['datetime'].loc[i])
+    data[:,1] = df1['season']
+    data[:,2] = df1['holiday']
+    data[:,3] = df1['workingday']
+    data[:,4] = df1['weather']
+    data[:,5] = (df1['temp']+df1['atemp'])/2
+    data[:,6] = df1['humidity']
+    data[:,7] = df1['windspeed']
+    labels = np.zeros([size, 3]) #samples labels
+    labels[:,0] = df1['casual']
+    labels[:,1] = df1['registered']
+    labels[:,2] = df1['count']
+    return [data, labels]
+
 
 if __name__ == '__main__':
     trainFilePath = 'train.csv'
     df1 = pd.read_csv(trainFilePath, encoding='utf-8')
+
+    # split to get hour
     size = len(df1['datetime'])
     hours = np.zeros(size)
     for i in range(size):
         hours[i] = getHour(df1['datetime'].loc[i])
     print(hours)
+
+    getStructureData(df1)
+
+    # simply count for left area number
     leftCount = 0
     for i in range(size-1):
         if ((hours[i+1]-hours[i]+24) % 24 != 1):
-            print(hours[i],'-',hours[i+1])
+            #print(hours[i],'-',hours[i+1])
             leftCount += 1
     print(leftCount)
 
 
-
+    '''
     plt.figure(0)
     plt.scatter(hours[df1['workingday'] == 0], df1['count'].loc[df1['workingday'] == 0], marker='x',c='r')
     plt.scatter(hours[df1['workingday'] == 1], df1['count'].loc[df1['workingday'] == 1], marker='x', c='g')
@@ -54,3 +79,4 @@ if __name__ == '__main__':
     plt.xlim([0, 42])
     plt.ylim([0, 48])
     plt.savefig('image/temp vs atemp.png',dpi=150)
+    '''
