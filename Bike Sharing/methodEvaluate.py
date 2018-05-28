@@ -3,6 +3,7 @@ import numpy as np
 import math
 from DataPreprocess import getStructureData
 from RegresionMethod import *
+import matplotlib.pyplot as plt
 
 # split the dataset and labels to k-fold
 def splitKfold(data, labels, k):
@@ -27,19 +28,39 @@ def RMSLEevaluate(testLabels, predictLabels):
         delta = np.log(testLabels+1) - np.log(predictLabels+1)
         return math.sqrt(np.mean(np.square(delta)))
 
+# change the parameter max_depth of the decision tree
 def selectDecisionTreeDepth(data, labels, k):
     depths = range(1,21)
+    meanRMSLEs = np.zeros(len(depths))
+    meanTrainRMSLEs = np.zeros(len(depths))
+    stdRMSLEs = np.zeros(len(depths))
     for max_depth in depths:
         # split data for train and validate part: k-fold strategy
         generates = splitKfold(data, labels, k)  # split for 5-fold
         genitor = generates.__iter__()
         RMSLEs = np.zeros(k)
+        trainRMSLEs = np.zeros(k)
         # k-fold evaluate model
         for i in range(k):
             trainData, trainLabels, validateData, validateLabels = genitor.__next__()
             predictLabels = regressionMethod(trainData, trainLabels, validateData, max_depth=max_depth)
             RMSLEs[i] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
-        print('max_depth # ', max_depth, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.var(RMSLEs))
+            predictTrainLabels = regressionMethod(trainData, trainLabels, trainData, max_depth=max_depth)
+            trainRMSLEs[i] = RMSLEevaluate(trainLabels[:, 2], predictTrainLabels)
+        print('max_depth # ', max_depth, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.std(RMSLEs))
+        meanRMSLEs[max_depth-1] = np.mean(RMSLEs)
+        meanTrainRMSLEs[max_depth-1] = np.mean(trainRMSLEs)
+        stdRMSLEs[max_depth-1] = np.std(RMSLEs)
+    plt.figure(0)
+    plt.plot(depths, meanRMSLEs, marker='.', c='b',linewidth=1.5, mfc='r',ms=10)
+    plt.plot(depths, meanTrainRMSLEs, marker='.', c='g', ls='--', lw=1.5, mfc='r', ms=10)
+    plt.title('max_depth vs RMSLE')
+    plt.xlabel('max_depth')
+    plt.ylabel('mean of RMSLE')
+    plt.legend(['validate set', 'train set'])
+    plt.grid()
+    plt.savefig('image/DT_depth vs RMSLE.png', dpi=150)
+
 
 def selectRandomForestN(data, labels, k, max_depth=None):
     Ns = range(1,51,2)
@@ -53,7 +74,7 @@ def selectRandomForestN(data, labels, k, max_depth=None):
             trainData, trainLabels, validateData, validateLabels = genitor.__next__()
             predictLabels = regressionMethod(trainData, trainLabels, validateData, method=1, max_depth=max_depth, n_estimators=n)
             RMSLEs[i] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
-        print('n # ', n, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.var(RMSLEs))
+        print('n # ', n, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.std(RMSLEs))
 
 if __name__ == '__main__':
     # Load and preprocess for train data
@@ -61,8 +82,8 @@ if __name__ == '__main__':
     df1 = pd.read_csv(trainFilePath, encoding='utf-8')
     data, labels = getStructureData(df1)
 
-    #selectDecisionTreeDepth(data, labels, 5)
-    selectRandomForestN(data, labels, 5, 9)
+    selectDecisionTreeDepth(data, labels, 5)
+    #selectRandomForestN(data, labels, 5, 9)
 
     '''
     #split data for train and validate part: k-fold strategy
