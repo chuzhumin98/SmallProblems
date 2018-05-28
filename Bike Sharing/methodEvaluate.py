@@ -41,13 +41,28 @@ def selectDecisionTreeDepth(data, labels, k):
             RMSLEs[i] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
         print('max_depth # ', max_depth, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.var(RMSLEs))
 
+def selectRandomForestN(data, labels, k, max_depth=None):
+    Ns = range(1,51,2)
+    for n in Ns:
+        # split data for train and validate part: k-fold strategy
+        generates = splitKfold(data, labels, k)  # split for 5-fold
+        genitor = generates.__iter__()
+        RMSLEs = np.zeros(k)
+        # k-fold evaluate model
+        for i in range(k):
+            trainData, trainLabels, validateData, validateLabels = genitor.__next__()
+            predictLabels = regressionMethod(trainData, trainLabels, validateData, method=1, max_depth=max_depth, n_estimators=n)
+            RMSLEs[i] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
+        print('n # ', n, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.var(RMSLEs))
+
 if __name__ == '__main__':
     # Load and preprocess for train data
     trainFilePath = 'train.csv'
     df1 = pd.read_csv(trainFilePath, encoding='utf-8')
     data, labels = getStructureData(df1)
 
-    selectDecisionTreeDepth(data, labels, 5)
+    #selectDecisionTreeDepth(data, labels, 5)
+    selectRandomForestN(data, labels, 5, 9)
 
     '''
     #split data for train and validate part: k-fold strategy
