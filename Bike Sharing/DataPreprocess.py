@@ -18,7 +18,9 @@ def getStructureData(df1,trainData = True):
     data[:,2] = df1['holiday']
     data[:,3] = df1['workingday']
     data[:,4] = df1['weather']
+    outlierIndex = (df1['temp'] - df1['atemp'] > 10)
     data[:,5] = (df1['temp']+df1['atemp'])/2
+    data[outlierIndex,5] = df1['temp'].loc[outlierIndex] # reset for outliers point
     data[:,6] = df1['humidity']
     data[:,7] = df1['windspeed']
     if (trainData):
@@ -62,7 +64,7 @@ if __name__ == '__main__':
     plt.xlabel('hour')
     plt.ylabel('count')
     plt.title('hour vs count')
-    plt.savefig('image/hour vs count.png',dpi=150)
+    plt.savefig('image/hour vs countv2.png',dpi=150)
 
     plt.figure(1)
     plt.scatter(df1['temp'], df1['count'],marker='.')
@@ -71,8 +73,9 @@ if __name__ == '__main__':
     plt.title('temp vs count')
     plt.xlim([0, 42])
     plt.ylim([0, 1000])
-    plt.savefig('image/temp vs count.png',dpi=150)
+    plt.savefig('image/temp vs countv2.png',dpi=150)
 
+    '''
     plt.figure(2)
     plt.scatter(df1['temp'],df1['atemp'], marker='x',c='b')
     plt.plot(range(42), range(42), c='r')
@@ -81,5 +84,4 @@ if __name__ == '__main__':
     plt.title('temp vs atemp')
     plt.xlim([0, 42])
     plt.ylim([0, 48])
-    plt.savefig('image/temp vs atemp.png',dpi=150)
-    '''
+    plt.savefig('image/temp vs atempv2.png',dpi=150)

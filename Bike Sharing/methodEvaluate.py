@@ -59,7 +59,14 @@ def selectDecisionTreeDepth(data, labels, k):
     plt.ylabel('mean of RMSLE')
     plt.legend(['validate set', 'train set'])
     plt.grid()
-    plt.savefig('image/DT_depth vs RMSLE.png', dpi=150)
+    plt.savefig('image/DT_depth vs RMSLEv2.png', dpi=150)
+
+    plt.figure(1)
+    plt.plot(depths, stdRMSLEs, marker='.', c='b',linewidth=1.5, mfc='r',ms=10)
+    plt.title('max_depth vs std(RMSLE)')
+    plt.xlabel('max_depth')
+    plt.ylabel('std of RMSLE')
+    plt.savefig('image/DT_depth vs std_RMSLEv2.png', dpi=150)
 
 
 def selectRandomForestN(data, labels, k, max_depth=None):
