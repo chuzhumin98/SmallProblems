@@ -9,7 +9,7 @@ def getHour(stamp):
     return hour
 
 # get for structured data and labels
-def getStructureData(df1):
+def getStructureData(df1,trainData = True):
     size = len(df1['datetime'])
     data = np.zeros([size, 8]) #samples data
     for i in range(size):
@@ -21,11 +21,14 @@ def getStructureData(df1):
     data[:,5] = (df1['temp']+df1['atemp'])/2
     data[:,6] = df1['humidity']
     data[:,7] = df1['windspeed']
-    labels = np.zeros([size, 3]) #samples labels
-    labels[:,0] = df1['casual']
-    labels[:,1] = df1['registered']
-    labels[:,2] = df1['count']
-    return [data, labels]
+    if (trainData):
+        labels = np.zeros([size, 3])  # samples labels
+        labels[:, 0] = df1['casual']
+        labels[:, 1] = df1['registered']
+        labels[:, 2] = df1['count']
+        return [data, labels]
+    else:
+        return data
 
 
 if __name__ == '__main__':
