@@ -70,7 +70,9 @@ def selectDecisionTreeDepth(data, labels, k):
 
 
 def selectRandomForestN(data, labels, k, max_depth=None):
-    Ns = range(1,51,2)
+    Ns = range(1,51)
+    meanRMSLEs = np.zeros(len(Ns))
+    stdRMSLEs = np.zeros(len(Ns))
     for n in Ns:
         # split data for train and validate part: k-fold strategy
         generates = splitKfold(data, labels, k)  # split for 5-fold
@@ -82,6 +84,22 @@ def selectRandomForestN(data, labels, k, max_depth=None):
             predictLabels = regressionMethod(trainData, trainLabels, validateData, method=1, max_depth=max_depth, n_estimators=n)
             RMSLEs[i] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
         print('n # ', n, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.std(RMSLEs))
+        meanRMSLEs[n - 1] = np.mean(RMSLEs)
+        stdRMSLEs[n - 1] = np.std(RMSLEs)
+    plt.figure(2)
+    plt.plot(Ns, meanRMSLEs, marker='.', c='b',linewidth=1.5, mfc='r',ms=10)
+    plt.title('tree number vs RMSLE')
+    plt.xlabel('tree number')
+    plt.ylabel('mean of RMSLE')
+    plt.grid()
+    plt.savefig('image/RF_number vs RMSLE.png', dpi=150)
+
+    plt.figure(3)
+    plt.plot(Ns, stdRMSLEs, marker='.', c='b',linewidth=1.5, mfc='r',ms=10)
+    plt.title('tree number vs std(RMSLE)')
+    plt.xlabel('tree number')
+    plt.ylabel('std of RMSLE')
+    plt.savefig('image/RF_number vs std_RMSLE.png', dpi=150)
 
 if __name__ == '__main__':
     # Load and preprocess for train data
@@ -89,10 +107,9 @@ if __name__ == '__main__':
     df1 = pd.read_csv(trainFilePath, encoding='utf-8')
     data, labels = getStructureData(df1)
 
-    selectDecisionTreeDepth(data, labels, 5)
+    #selectDecisionTreeDepth(data, labels, 5)
     #selectRandomForestN(data, labels, 5, 9)
 
-    '''
     #split data for train and validate part: k-fold strategy
     k = 5
     generates = splitKfold(data, labels, k) #split for 5-fold
@@ -101,7 +118,6 @@ if __name__ == '__main__':
     # k-fold evaluate model
     for i in range(k):
         trainData, trainLabels, validateData, validateLabels = genitor.__next__()
-        predictLabels = regressionMethod(trainData, trainLabels, validateData) # max_depth = 9 is best
+        predictLabels = regressionMethod(trainData, trainLabels, validateData, isSplit=True, method=1, max_depth=9, n_estimators=30) # max_depth = 9 is best
         RMSLEs[i] = RMSLEevaluate(validateLabels[:,2], predictLabels)
-    print('K-fold RMSLE = ',RMSLEs, ' average RMSLE = ',np.mean(RMSLEs),' variance = ',np.var(RMSLEs))
-    '''
+    print('K-fold RMSLE = ',RMSLEs, ' average RMSLE = ',np.mean(RMSLEs),' std = ',np.std(RMSLEs))
