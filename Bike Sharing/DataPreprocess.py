@@ -32,6 +32,31 @@ def getStructureData(df1,trainData = True):
     else:
         return data
 
+# get for one hot data which has been normalized
+def getOneHotNormalizeData(data):
+    size = len(data)
+    newData = np.zeros([size, 34])
+    for i in range(24):
+        newData[data[:,0] == i, i] = 1 # the first 24 dim features shows time
+    for i in range(24,28):
+        newData[data[:,1] == i-23, i] = 1 # the 25-28 dim features shows season
+    newData[:, 28:34] = data[:,2:8] # the next are the same for the raw data
+    for i in range(30,34):
+        minValue = min(newData[:,i])
+        maxValue = max(newData[:,i])
+        newData[:,i] = (newData[:,i]-minValue)/(maxValue-minValue)
+    return newData
+
+# get for normalized data
+def getNormalizeData(data):
+    size = len(data)
+    feature = len(data[0])
+    newData = np.zeros([size, feature])
+    for i in range(feature):
+        minValue = min(newData[:, i])
+        maxValue = max(newData[:, i])
+        newData[:, i] = (newData[:, i] - minValue) / (maxValue - minValue)
+    return newData
 
 if __name__ == '__main__':
     trainFilePath = 'train.csv'
@@ -44,7 +69,8 @@ if __name__ == '__main__':
         hours[i] = getHour(df1['datetime'].loc[i])
     print(hours)
 
-    getStructureData(df1)
+    data, labels = getStructureData(df1)
+    oneHotData = getOneHotNormalizeData(data)
 
     # simply count for left area number
     leftCount = 0
@@ -75,7 +101,7 @@ if __name__ == '__main__':
     plt.ylim([0, 1000])
     plt.savefig('image/temp vs countv2.png',dpi=150)
 
-    '''
+    
     plt.figure(2)
     plt.scatter(df1['temp'],df1['atemp'], marker='x',c='b')
     plt.plot(range(42), range(42), c='r')
@@ -85,3 +111,4 @@ if __name__ == '__main__':
     plt.xlim([0, 42])
     plt.ylim([0, 48])
     plt.savefig('image/temp vs atempv2.png',dpi=150)
+    '''
