@@ -3,8 +3,20 @@ import numpy as np
 import pandas as pd
 from DataPreprocess import getStructureData
 from DataPreprocess import getOneHotNormalizeData
-from methodEvaluate import splitKfold
 
+# split the dataset and labels to k-fold
+def splitKfold(data, labels, k):
+    size = len(data) # the total data set
+    indexArray = np.array(range(size), dtype=int)  # 下标数组
+    np.random.shuffle(indexArray)
+    for i in range(k):
+        low = size * i // k
+        high = size * (i+1) // k
+        trainData = np.row_stack((data[:low, :], data[high:,:]))
+        trainLabels = np.row_stack((labels[:low,:], labels[high:,:]))
+        validateData = data[low:high,:]
+        validateLabels = labels[low:high,:]
+        yield [trainData, trainLabels, validateData, validateLabels]
 
 
 # 增加一层
@@ -41,6 +53,10 @@ def MLP(trainData, trainLabels, validateData, validateLabels=None):
     # 两个隐含层和输出层
     layer1 = addLayer(x, featureNum, 50, activateFunction=tf.nn.relu)
     layer2 = addLayer(layer1, 50, 20, activateFunction=tf.nn.relu)
+    # 对全连接层进行dropout操作
+    keepProb = tf.placeholder(tf.float32)  # 将keep的概率作为占位符可动态变化
+    layer2Drop = tf.nn.dropout(layer2, keepProb)
+
     yhat = addLayer(layer2, 20, 1, activateFunction=None)
 
     # 计算最后一层是softmax层的cross entropy
@@ -51,7 +67,7 @@ def MLP(trainData, trainLabels, validateData, validateLabels=None):
     learing_rates = [0.001, 0.0005, 0.0002, 0.0001, 0.00005, 0.00002]
     iterNum = tf.placeholder(tf.int32)
     learing_rate = tf.train.piecewise_constant(iterNum, boundaries=boundaries, values=learing_rates)  # 学习率阶梯状下降
-    trainStep = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)  # 采用Adam优化
+    trainStep = tf.train.AdamOptimizer(learning_rate=learing_rate).minimize(loss)  # 采用Adam优化
     init = tf.global_variables_initializer()  # 变量的初始化
 
     batchGen = nextBatch(trainData, trainLabels, 50)  # 选取50的batch的生成器
@@ -62,14 +78,14 @@ def MLP(trainData, trainLabels, validateData, validateLabels=None):
         for i in range(100000):
             batchData, batchLabels = batchGenitor.__next__()  # 生成一个batch
             if (i + 1) % 1000 == 0:
-                lossNow = sess.run(loss, feed_dict={x: trainData, y: trainLabels})  # 观测不得影响模型
+                lossNow = sess.run(loss, feed_dict={x: trainData, y: trainLabels, keepProb:1})  # 观测不得影响模型
                 print('step #', i + 1, ' train RMSLE = ', np.sqrt(lossNow))
                 if (not validateLabels is None):
-                    validateLoss = sess.run(loss, feed_dict={x:validateData, y:validateLabels})
+                    validateLoss = sess.run(loss, feed_dict={x:validateData, y:validateLabels,keepProb:1})
                     print('step #', i + 1, ' validate RMSLE = ', np.sqrt(validateLoss))
-            sess.run(trainStep, feed_dict={x: batchData, y: batchLabels, iterNum: i})
+            sess.run(trainStep, feed_dict={x: batchData, y: batchLabels, iterNum: i,keepProb:0.5})
         if (validateLabels is None):
-            yhats = sess.run(yhat, feed_dict={x: validateData})
+            yhats = sess.run(yhat, feed_dict={x: validateData, keepProb:1})
             return yhats
 
 if __name__ == '__main__':

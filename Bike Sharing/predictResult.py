@@ -17,8 +17,8 @@ if __name__ == '__main__':
     trainData = getOneHotNormalizeData(trainData)
     testData = getOneHotNormalizeData(testData)
 
-    predictLabels = regressionMethod(trainData, trainLabels, testData, isSplit=True, method=4, max_depth=9, n_estimators=30)
+    predictLabels = regressionMethod(trainData, trainLabels, testData, isSplit=True, method=7, max_depth=9, n_estimators=5000)
     predictLabels = np.maximum(predictLabels, 0)
     predictFrame = pd.DataFrame(np.transpose([df2['datetime'], predictLabels]),
                                 columns=['datetime', 'count'])
-    predictFrame.to_csv('results/MLP_split_v2.csv', sep=',', index=None)
+    predictFrame.to_csv('results/BR_onehot_log_split_v3.csv', sep=',', index=None)
