@@ -53,8 +53,8 @@ def getNormalizeData(data):
     feature = len(data[0])
     newData = np.zeros([size, feature])
     for i in range(feature):
-        minValue = min(newData[:, i])
-        maxValue = max(newData[:, i])
+        minValue = min(data[:, i])
+        maxValue = max(data[:, i])
         newData[:, i] = (newData[:, i] - minValue) / (maxValue - minValue)
     return newData
 

@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import math
 from DataPreprocess import getStructureData
+from DataPreprocess import getNormalizeData
+from DataPreprocess import getOneHotNormalizeData
 from RegresionMethod import *
 import matplotlib.pyplot as plt
 
@@ -101,11 +103,14 @@ def selectRandomForestN(data, labels, k, max_depth=None):
     plt.ylabel('std of RMSLE')
     plt.savefig('image/RF_number vs std_RMSLE.png', dpi=150)
 
+
+
 if __name__ == '__main__':
     # Load and preprocess for train data
     trainFilePath = 'train.csv'
     df1 = pd.read_csv(trainFilePath, encoding='utf-8')
     data, labels = getStructureData(df1)
+    data = getOneHotNormalizeData(data)
 
     #selectDecisionTreeDepth(data, labels, 5)
     #selectRandomForestN(data, labels, 5, 9)
@@ -118,6 +123,7 @@ if __name__ == '__main__':
     # k-fold evaluate model
     for i in range(k):
         trainData, trainLabels, validateData, validateLabels = genitor.__next__()
-        predictLabels = regressionMethod(trainData, trainLabels, validateData, isSplit=True, method=1, max_depth=9, n_estimators=30) # max_depth = 9 is best
+        predictLabels = regressionMethod(trainData, trainLabels, validateData, isSplit=True, method=3) # max_depth = 9 is best
+        predictLabels = np.maximum(predictLabels, 0)
         RMSLEs[i] = RMSLEevaluate(validateLabels[:,2], predictLabels)
     print('K-fold RMSLE = ',RMSLEs, ' average RMSLE = ',np.mean(RMSLEs),' std = ',np.std(RMSLEs))
