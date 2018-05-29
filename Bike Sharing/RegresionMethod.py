@@ -19,6 +19,12 @@ def regressionMethod(trainData, trainLabels, testData, method=0, isSplit=False, 
         if (not isSplit):
             prediction = MLP(trainData, np.log(trainLabels[:,2:3]+1), testData)
             return np.exp(prediction[:,0]) - 1
+        else:
+            casualPredict = MLP(trainData, np.log(trainLabels[:,0:1]+1), testData)
+            casualPredict = np.exp(casualPredict[:,0])-1
+            registerPredict = MLP(trainData, np.log(trainLabels[:,1:2]+1), testData)
+            registerPredict = np.exp(registerPredict[:,0])-1
+            return casualPredict + registerPredict
 
     if (not isSplit):
         clf.fit(trainData, trainLabels[:, 2])
