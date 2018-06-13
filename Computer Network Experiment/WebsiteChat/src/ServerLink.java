@@ -17,13 +17,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class ServerLink {
-	public static String serverIP = "166.111.140.84"; //服务器的IP地址
-	//public static String serverIP = "166.111.140.52"; //服务器的IP地址
+	//public static String serverIP = "166.111.140.84"; //服务器的IP地址
+	public static String serverIP = "166.111.140.52"; //服务器的IP地址
 	//public static String serverIP = "localhost"; //服务器的IP地址
 	public static int serverPort = 8000; //服务器端的端口号
 	public static String studentID = "2015012158";
@@ -32,9 +33,12 @@ public class ServerLink {
 	
 	public static ServerLink link; //单子模式对象
 	
+	public String currentStudent; //目前登录的学生的ID
 	public Socket socket;
 	public OutputStream os;
 	public BufferedReader br;
+	public JFrame welcomeFrame = new JFrame(); //欢迎界面
+	public JFrame mainFrame = new JFrame(); //主界面
 	
 	/**
 	 * 单子模式下实际的获取对象的语句
@@ -110,12 +114,18 @@ public class ServerLink {
 				System.err.println("cannot recieve query message from server!");
 			}
 			String queryResponse = String.valueOf(responseBuffer);
-			if (queryResponse.substring(0,1).equals("n")) {
+			if ((queryResponse.charAt(0) < '0' || queryResponse.charAt(0) > '9')
+					&& (queryResponse.charAt(0) != '.' )) {
 				System.err.println("the query user isn't online");
-				return null;
 			}
 			System.out.println(queryResponse);
-			return queryResponse;
+			int lastIdx = 99; //最后一个有实际意义的字符
+			for (; lastIdx >= 0; lastIdx--) {
+				if (queryResponse.charAt(lastIdx) != '\0') {
+					break;
+				}
+			}
+			return queryResponse.substring(0, lastIdx+1);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -146,13 +156,8 @@ public class ServerLink {
 		}
 	}
 	
-	
-	
-	public static void main(String[] args) {
-		ServerLink link = ServerLink.getInstance();
-		
-		JFrame f = new JFrame();
-        f.setTitle("Welcome Frame");
+	void setWelcomeFrame(JFrame f) {
+		f.setTitle("Welcome Frame");
         f.setResizable(false);
         f.setBounds(100,50,300,300);
         
@@ -181,6 +186,7 @@ public class ServerLink {
         passPanel.setLayout(new FlowLayout());
         passPanel.add(passLabel);
         passPanel.add(passField);
+        passField.setText("net2018"); //为方便测试，直接输好密码
         
         //登录按钮
         JPanel buttonPanel = new JPanel();
@@ -193,10 +199,15 @@ public class ServerLink {
         loginButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		//登入
-        		String loginCommand = userJtf.getText()+"_"+passField.getText();
+        		String userId = userJtf.getText();
+        		String loginCommand = userId+"_"+passField.getText();
         		System.out.println("send command:"+loginCommand);
-        		link.login(loginCommand);
-        		System.out.println("has been clicked!");
+        		boolean status = link.login(loginCommand);
+        		if (status) {
+        			link.currentStudent = userId; //得到目前登录的学号，为后面做准备
+        			f.setVisible(false);
+        			link.mainFrame.setVisible(true);
+        		}
             }
       });
         
@@ -210,6 +221,82 @@ public class ServerLink {
         
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setVisible(true);        
+	}
+	
+	
+	/**
+	 * 设置主界面，即总功能的大厅
+	 * 
+	 * @param f
+	 */
+	public void setMainFrame(JFrame f) {
+		f.setTitle("Main Frame");
+        f.setResizable(false);
+        f.setBounds(100,50,400,200);
+        
+        //欢迎部分
+        JPanel welcomePanel = new JPanel();
+        welcomePanel.setLayout(new FlowLayout());       
+        JLabel welcomeLabel = new JLabel("大厅界面");
+        welcomeLabel.setForeground(Color.BLUE);
+        welcomeLabel.setFont(new Font("黑体", Font.BOLD, 30));
+        welcomePanel.add(welcomeLabel);
+        
+        //好友账号部分
+        JPanel userPanel = new JPanel();
+        userPanel.setLayout(new FlowLayout());       
+        JLabel userLabel = new JLabel("好友ID:");
+        JTextField userField = new JTextField(10);
+        userLabel.setFont(new Font("宋体", Font.PLAIN, 20));
+        userPanel.add(userLabel);
+        userPanel.add(userField);
+        
+        //查询与聊天按钮
+        JPanel buttonPanel = new JPanel();
+        JButton queryButton = new JButton("查询");
+        queryButton.setFont(new Font("黑体", Font.PLAIN, 15));
+        JButton chatButton = new JButton("聊天");
+        chatButton.setFont(new Font("黑体", Font.PLAIN, 15));
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(queryButton);
+        buttonPanel.add(chatButton);
+        
+        queryButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		//查询好友是否在线
+        		String friendId = userField.getText();
+        		String queryCommand = "q"+friendId;
+        		System.out.println("send command:"+queryCommand);
+        		String IP = link.queryUser(queryCommand);
+        		//System.out.println(IP.length());
+        		if ((IP.charAt(0) >= '0' && IP.charAt(0) <= '9')
+    					|| (IP.charAt(0) == '.' )) {
+        			JOptionPane.showMessageDialog(f,"Your friend is online, his IP address \nis "+IP+".");
+        		} else if (IP.equals("n")) {
+        			JOptionPane.showMessageDialog(f,"Sorry, but your friend isn't online.");
+        		} else {
+        			JOptionPane.showMessageDialog(f,"Sorry, but "+IP);
+        		}
+            }
+      });
+        
+        
+        f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS)); //不同panel之间纵向排列
+        f.getContentPane().add(welcomePanel);
+        f.getContentPane().add(userPanel);
+        f.getContentPane().add(buttonPanel);
+        
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setVisible(true); 
+	}
+	
+	public static void main(String[] args) {
+		ServerLink link = ServerLink.getInstance();
+		
+		link.setMainFrame(link.mainFrame); //设置主界面
+        link.setWelcomeFrame(link.welcomeFrame); //设置欢迎界面（登录）
+        
+        
 
 		/*
 		//登入
