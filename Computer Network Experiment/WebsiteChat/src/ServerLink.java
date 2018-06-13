@@ -1,16 +1,32 @@
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class ServerLink {
 	public static String serverIP = "166.111.140.84"; //服务器的IP地址
 	//public static String serverIP = "166.111.140.52"; //服务器的IP地址
 	//public static String serverIP = "localhost"; //服务器的IP地址
 	public static int serverPort = 8000; //服务器端的端口号
-	public static String studentID = "2015012177";
+	public static String studentID = "2015012158";
+	
+	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
 	
 	public static ServerLink link; //单子模式对象
 	
@@ -132,11 +148,63 @@ public class ServerLink {
 	
 	public static void main(String[] args) {
 		ServerLink link = ServerLink.getInstance();
+		
+		JFrame f = new JFrame();
+        f.setTitle("Welcome Frame");
+        f.setResizable(false);
+        f.setBounds(100,50,300,300);
+        
+        //欢迎部分
+        JPanel welcomePanel = new JPanel();
+        welcomePanel.setLayout(new FlowLayout());       
+        JLabel welcomeLabel = new JLabel("登录界面");
+        welcomeLabel.setForeground(Color.BLUE);
+        welcomeLabel.setFont(new Font("黑体", Font.BOLD, 30));
+        welcomePanel.add(welcomeLabel);
+        
+        // 账号部分
+        JPanel userPanel = new JPanel();
+        userPanel.setLayout(new FlowLayout());       
+        JLabel userLabel = new JLabel("登录账号:");
+        JTextField userJtf = new JTextField(10);
+        userLabel.setFont(new Font("宋体", Font.PLAIN, 20));
+        userPanel.add(userLabel);
+        userPanel.add(userJtf);
+
+        // 密码部分
+        JPanel passPanel = new JPanel();
+        JLabel passLabel = new JLabel("登录密码:");
+        passLabel.setFont(new Font("宋体", Font.PLAIN, 20));
+        JPasswordField passField = new JPasswordField(10);
+        passPanel.setLayout(new FlowLayout());
+        passPanel.add(passLabel);
+        passPanel.add(passField);
+        
+        //登录按钮
+        JPanel buttonPanel = new JPanel();
+        JButton loginButton = new JButton("登录");
+        loginButton.setFont(new Font("黑体", Font.PLAIN, 15));
+        loginButton.setSize(50,50);
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(loginButton);
+        
+        
+        f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS)); //不同panel之间纵向排列
+        f.getContentPane().add(welcomePanel);
+        f.getContentPane().add(userPanel);
+        f.getContentPane().add(passPanel);
+        f.getContentPane().add(buttonPanel);
+        
+        
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setVisible(true);        
+
+		
 		//登入
 		String loginCommand = ServerLink.studentID+"_net2018";
 		link.login(loginCommand);
 		//查询好友
-		String queryCommand = "q2015012177";
+		String queryCommand = "q2015012158";
 		link.queryUser(queryCommand);
 		
 		//登出

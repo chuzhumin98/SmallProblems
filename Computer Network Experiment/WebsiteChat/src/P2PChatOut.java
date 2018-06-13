@@ -2,31 +2,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 
-public class P2PChatIn extends Thread {
+public class P2PChatOut extends Thread {
 	public UserInfo chatUser; //聊天对象的信息
 	public Socket socket; //socket通信对象
 	
-	public P2PChatIn(Socket socket, String chatUserName) {
+	public P2PChatOut(Socket socket, String chatUserName) {
 		this.socket = socket;
 		this.chatUser = new UserInfo(socket.getInetAddress().getHostAddress(), socket.getPort(), chatUserName);
 	}
 	
 	public void run() {
-		InputStream is; //socket的输入流
+		OutputStream os;
 		try {
-			is = socket.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
+			os = socket.getOutputStream(); //socket的输出流
 			while (true) {
-				while (br.ready()) {
-					String content = br.readLine();
-					System.out.println(this.chatUser.username+":"+content);
-				}
-				Thread.sleep(500);
+				//os.write(loginCommand.getBytes("US-ASCII"));
 			}
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
