@@ -13,6 +13,11 @@ public class P2PChatIn extends Thread {
 		this.chatUser = new UserInfo(socket.getInetAddress().getHostAddress(), socket.getPort(), chatUserName);
 	}
 	
+	public P2PChatIn(Socket socket) {
+		this.socket = socket;
+		this.chatUser = new UserInfo(socket.getInetAddress().getHostAddress(), socket.getPort(), "default");
+	}
+	
 	public void run() {
 		InputStream is; //socket的输入流
 		try {

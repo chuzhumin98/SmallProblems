@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,10 +31,11 @@ public class ServerLink {
 	public static String studentID = "2015012158";
 	
 	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
+	public static Map<String,JFrame> chatFrames = new HashMap<String,JFrame>(); //各IP所对应的界面
 	
 	public static ServerLink link; //单子模式对象
 	
-	public String currentStudent; //目前登录的学生的ID
+	public static String currentStudent; //目前登录的学生的ID
 	public Socket socket;
 	public OutputStream os;
 	public BufferedReader br;
@@ -204,12 +206,12 @@ public class ServerLink {
         		System.out.println("send command:"+loginCommand);
         		boolean status = link.login(loginCommand);
         		if (status) {
-        			link.currentStudent = userId; //得到目前登录的学号，为后面做准备
+        			ServerLink.currentStudent = userId; //得到目前登录的学号，为后面做准备
         			f.setVisible(false);
         			link.mainFrame.setVisible(true);
         		}
             }
-      });
+        });
         
         
         f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS)); //不同panel之间纵向排列
@@ -278,7 +280,38 @@ public class ServerLink {
         			JOptionPane.showMessageDialog(f,"Sorry, but "+IP);
         		}
             }
-      });
+        });
+        
+        chatButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		//查询好友是否在线
+        		String friendId = userField.getText();
+        		String queryCommand = "q"+friendId;
+        		System.out.println("send command:"+queryCommand);
+        		String IP = link.queryUser(queryCommand);
+        		//System.out.println(IP.length());
+        		if ((IP.charAt(0) >= '0' && IP.charAt(0) <= '9')
+    					|| (IP.charAt(0) == '.' )) {
+        			JOptionPane.showMessageDialog(f,"Your friend is online, now send the chat request.");     
+        			try {
+						Socket chatSocket = new Socket(IP, 7800); //新建一个与好友之间的socket连接对象
+						System.out.println("link server address:"+chatSocket.getInetAddress());
+						
+					} catch (UnknownHostException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}         			
+        		} else if (IP.equals("n")) {
+        			JOptionPane.showMessageDialog(f,"Sorry, but your friend isn't online.");
+        		} else {
+        			JOptionPane.showMessageDialog(f,"Sorry, but "+IP);
+        		}
+            }
+        });
+        
         
         
         f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS)); //不同panel之间纵向排列
@@ -290,8 +323,18 @@ public class ServerLink {
         f.setVisible(true); 
 	}
 	
+	/**
+	 * 建立聊天界面
+	 * 
+	 * @return
+	 */
+	public JFrame buildChatFrame() {
+		return null;
+	}
+	
 	public static void main(String[] args) {
 		ServerLink link = ServerLink.getInstance();
+		new MultiP2PServer().start();
 		
 		link.setMainFrame(link.mainFrame); //设置主界面
         link.setWelcomeFrame(link.welcomeFrame); //设置欢迎界面（登录）
