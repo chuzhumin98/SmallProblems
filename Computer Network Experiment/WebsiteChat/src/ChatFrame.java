@@ -2,12 +2,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -20,7 +27,10 @@ public class ChatFrame extends JFrame {
 	public JButton sendButton;
 	public JButton fileButton;
 	
-	public ChatFrame() {
+	public String IP; //该JFrame所对应的好友
+	
+	public ChatFrame(String IP) {
+		this.IP = IP;
 		this.setTitle("Chat Frame");
 		//this.setResizable(false);
         this.setBounds(100,50,800,600);
@@ -55,6 +65,17 @@ public class ChatFrame extends JFrame {
         operationPanel.add(inputField);
         operationPanel.add(buttonPanel);            
         
+        this.sendButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		String content = inputField.getText();
+        		if (content != null && content.length() >= 1) {
+        			ArrayList<String> contents = ServerLink.cacheContents.get(IP);
+        			contents.add(content);
+        			ServerLink.cacheContents.put(IP, contents);
+        		}
+            }
+        });
+        
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         this.getContentPane().add(titlePanel);
         this.getContentPane().add(contentPanel);
@@ -73,8 +94,13 @@ public class ChatFrame extends JFrame {
 		this.content.setText(msg+message+"\n");
 	}
 	
+	public void setChatTitle(String title) {
+		this.setTitle(title);
+		this.chatTitle.setText(title);
+	}
+	
 	public static void main(String[] args) {
-		ChatFrame frame1 = new ChatFrame();
+		ChatFrame frame1 = new ChatFrame("localhost");
 		frame1.appendMessage("Hello, world!");
 	}
 }

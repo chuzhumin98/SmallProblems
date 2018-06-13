@@ -306,7 +306,8 @@ public class ServerLink {
             			try {
     						Socket chatSocket = new Socket(IP, 7800); //新建一个与好友之间的socket连接对象
     						System.out.println("link server address:"+chatSocket.getInetAddress());
-    						ChatFrame chat = new ChatFrame();
+    						ChatFrame chat = new ChatFrame(IP);
+    						chat.setChatTitle(friendId);
     						new P2PChatIn(chatSocket, chat, friendId).start();
     						new P2PChatOut(chatSocket, chat, friendId).start();
     						ServerLink.cacheContents.put(IP, new ArrayList<String>());

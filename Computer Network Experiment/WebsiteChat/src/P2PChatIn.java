@@ -28,6 +28,8 @@ public class P2PChatIn extends Thread {
 			br.read(responseBuffer);
 			String userName = ServerLink.getUsefulContent(String.valueOf(responseBuffer));
 			System.out.println("get the chatting partner:"+userName);
+			this.chatUser.username = userName;
+			this.chat.setChatTitle(userName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -41,10 +43,11 @@ public class P2PChatIn extends Thread {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			while (true) {
-				while (br.ready()) {
-					String content = br.readLine();
-					System.out.println(this.chatUser.username+":"+content);
-				}
+				char[] responseBuffer = new char[100];
+				br.read(responseBuffer);
+				String content = ServerLink.getUsefulContent(String.valueOf(responseBuffer));
+				System.out.println(this.chatUser.username+":"+content);
+				this.chat.appendMessage(this.chatUser.username+":"+content);
 				Thread.sleep(500);
 			}
 		} catch (IOException | InterruptedException e) {
