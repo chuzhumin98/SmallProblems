@@ -31,7 +31,6 @@ public class ServerLink {
 	public static String studentID = "2015012158";
 	
 	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
-	public static Map<String,JFrame> chatFrames = new HashMap<String,JFrame>(); //各IP所对应的界面
 	
 	public static ServerLink link; //单子模式对象
 	
@@ -67,6 +66,22 @@ public class ServerLink {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 	
+	}
+	
+	/**
+	 * 获取字符串中有用的部分
+	 * 
+	 * @param content
+	 * @return
+	 */
+	public static String getUsefulContent(String content) {
+		int lastIdx = content.length()-1; //最后一个有实际意义的字符
+		for (; lastIdx >= 0; lastIdx--) {
+			if (content.charAt(lastIdx) != '\0') {
+				break;
+			}
+		}
+		return content.substring(0, lastIdx+1);
 	}
 	
 	/**
@@ -121,13 +136,7 @@ public class ServerLink {
 				System.err.println("the query user isn't online");
 			}
 			System.out.println(queryResponse);
-			int lastIdx = 99; //最后一个有实际意义的字符
-			for (; lastIdx >= 0; lastIdx--) {
-				if (queryResponse.charAt(lastIdx) != '\0') {
-					break;
-				}
-			}
-			return queryResponse.substring(0, lastIdx+1);
+			return ServerLink.getUsefulContent(queryResponse);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -292,18 +301,25 @@ public class ServerLink {
         		//System.out.println(IP.length());
         		if ((IP.charAt(0) >= '0' && IP.charAt(0) <= '9')
     					|| (IP.charAt(0) == '.' )) {
-        			JOptionPane.showMessageDialog(f,"Your friend is online, now send the chat request.");     
-        			try {
-						Socket chatSocket = new Socket(IP, 7800); //新建一个与好友之间的socket连接对象
-						System.out.println("link server address:"+chatSocket.getInetAddress());
-						
-					} catch (UnknownHostException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}         			
+        			if (!ServerLink.cacheContents.containsKey(IP)) { //查看该用户是否已建立连接
+        				JOptionPane.showMessageDialog(f,"Your friend is online, now send the chat request.");  			
+            			try {
+    						Socket chatSocket = new Socket(IP, 7800); //新建一个与好友之间的socket连接对象
+    						System.out.println("link server address:"+chatSocket.getInetAddress());
+    						ChatFrame chat = new ChatFrame();
+    						new P2PChatIn(chatSocket, chat, friendId).start();
+    						new P2PChatOut(chatSocket, chat, friendId).start();
+    						ServerLink.cacheContents.put(IP, new ArrayList<String>());
+    					} catch (UnknownHostException e1) {
+    						// TODO Auto-generated catch block
+    						e1.printStackTrace();
+    					} catch (IOException e1) {
+    						// TODO Auto-generated catch block
+    						e1.printStackTrace();
+    					}         		
+        			} else {
+        				JOptionPane.showMessageDialog(f,"Your friend is online, continue to chat.");
+        			}       				
         		} else if (IP.equals("n")) {
         			JOptionPane.showMessageDialog(f,"Sorry, but your friend isn't online.");
         		} else {
@@ -320,17 +336,9 @@ public class ServerLink {
         f.getContentPane().add(buttonPanel);
         
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setVisible(true); 
+        f.setVisible(false); 
 	}
 	
-	/**
-	 * 建立聊天界面
-	 * 
-	 * @return
-	 */
-	public JFrame buildChatFrame() {
-		return null;
-	}
 	
 	public static void main(String[] args) {
 		ServerLink link = ServerLink.getInstance();
