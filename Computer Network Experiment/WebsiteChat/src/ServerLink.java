@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,7 +74,7 @@ public class ServerLink {
 			os.write(loginCommand.getBytes("US-ASCII"));
 			System.out.println("succeed to send login request!");
 			
-			char[] responseBuffer = new char[20];
+			char[] responseBuffer = new char[100];
 			int flag = br.read(responseBuffer);
 			if (flag == -1) {
 				System.err.println("cannot recieve login message from server!");
@@ -102,7 +104,7 @@ public class ServerLink {
 			os.write(queryCommand.getBytes("US-ASCII"));
 			System.out.println("succeed to send query request!");
 			
-			char[] responseBuffer = new char [20];
+			char[] responseBuffer = new char [100];
 			int flag = br.read(responseBuffer);
 			if (flag == -1) {
 				System.err.println("cannot recieve query message from server!");
@@ -131,7 +133,7 @@ public class ServerLink {
 			os.write(logoutCommand.getBytes("US-ASCII"));
 			System.out.println("succeed to send logout request!");
 			
-			char[] responseBuffer = new char [20];
+			char[] responseBuffer = new char [100];
 			int flag = br.read(responseBuffer);
 			if (flag == -1) {
 				System.err.println("cannot recieve logout message from server!");
@@ -188,6 +190,16 @@ public class ServerLink {
         buttonPanel.setLayout(new FlowLayout());
         buttonPanel.add(loginButton);
         
+        loginButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		//登入
+        		String loginCommand = userJtf.getText()+"_"+passField.getText();
+        		System.out.println("send command:"+loginCommand);
+        		link.login(loginCommand);
+        		System.out.println("has been clicked!");
+            }
+      });
+        
         
         f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS)); //不同panel之间纵向排列
         f.getContentPane().add(welcomePanel);
@@ -199,7 +211,7 @@ public class ServerLink {
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setVisible(true);        
 
-		
+		/*
 		//登入
 		String loginCommand = ServerLink.studentID+"_net2018";
 		link.login(loginCommand);
@@ -210,5 +222,6 @@ public class ServerLink {
 		//登出
 		String logoutCommand = "logout"+ServerLink.studentID;
 		link.logout(logoutCommand);
+		*/
 	}
 }
