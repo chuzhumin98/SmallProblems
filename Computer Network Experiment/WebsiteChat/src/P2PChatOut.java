@@ -39,6 +39,9 @@ public class P2PChatOut extends Thread {
 			os = socket.getOutputStream(); //socket的输出流
 			while (true) {
 				sleep(500);
+				if (!ServerLink.cacheContents.containsKey(this.chat.IP) || !this.socket.isConnected()) { //找不到该键值，证明已断开连接
+					break;
+				}
 				ArrayList<String> contents = ServerLink.cacheContents.get(this.chat.IP);
 				ServerLink.cacheContents.put(this.chat.IP, new ArrayList<String>());
 				for (int i = 0; i < contents.size(); i++) {
@@ -51,5 +54,6 @@ public class P2PChatOut extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		System.out.println("succeed to release output thread!");
 	}
 }

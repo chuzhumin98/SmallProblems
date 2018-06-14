@@ -37,6 +37,8 @@ public class ServerLink {
 	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
 	public static Map<String,JFrame> frames = new HashMap<String,JFrame>(); //好友和对话框的对应关系
 	
+	public static ArrayList<Socket> sockets = new ArrayList<Socket>(); //记录所有的连接，便于注销时全部关闭
+	
 	public static ServerLink link; //单子模式对象
 	
 	public static String currentStudent; //目前登录的学生的ID
@@ -338,6 +340,7 @@ public class ServerLink {
     						new P2PChatOut(chatSocket, chat, friendId).start();
     						ServerLink.cacheContents.put(IP, new ArrayList<String>());
     						ServerLink.frames.put(IP, chat); //建立好友和聊天界面的对应关系
+    						ServerLink.sockets.add(chatSocket); //将该套接字加入到列表中
     					} catch (UnknownHostException e1) {
     						// TODO Auto-generated catch block
     						e1.printStackTrace();
@@ -372,8 +375,25 @@ public class ServerLink {
                 	} else {
                 		JOptionPane.showMessageDialog(f,"The file path is invalid, please rechoose.");
                 	}
-                	
                 }
+            }
+        });
+        
+        logoutButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		try {
+        			for (int i = 0; i < ServerLink.sockets.size(); i++) { //注销时关闭所有的连接
+            			if (ServerLink.sockets.get(i).isConnected()) {
+    						ServerLink.sockets.get(i).shutdownInput();
+    						ServerLink.sockets.get(i).shutdownOutput();
+    						ServerLink.sockets.get(i).close();
+            			}
+            		}
+        			ServerLink.sockets.clear();
+        		} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
         

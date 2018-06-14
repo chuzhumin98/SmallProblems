@@ -20,6 +20,7 @@ public class MultiP2PServer extends Thread{
 				new P2PChatOut(socketServer, chat).start();
 				ServerLink.cacheContents.put(IP, new ArrayList<String>());
 				ServerLink.frames.put(IP, chat);
+				ServerLink.sockets.add(socketServer);
 	        }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

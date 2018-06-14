@@ -43,6 +43,12 @@ public class P2PChatIn extends Thread {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			while (true) {
+				if (!this.socket.isConnected()) {
+					this.socket.shutdownInput();
+					this.socket.shutdownOutput();
+					this.socket.close();
+					break;
+				}
 				char[] responseBuffer = new char[100];
 				br.read(responseBuffer);
 				String content = ServerLink.getUsefulContent(String.valueOf(responseBuffer));
@@ -54,5 +60,13 @@ public class P2PChatIn extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		//连接断开时，则清空相关的数据
+		if (ServerLink.cacheContents.containsKey(this.chat.IP)) {
+			ServerLink.cacheContents.remove(this.chat.IP);
+		}
+		if (ServerLink.frames.containsKey(this.chat.IP)) {
+			ServerLink.frames.remove(this.chat.IP);
+		}
+		System.out.println("succeed to release input thread!");
 	}
 }
