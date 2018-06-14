@@ -43,17 +43,14 @@ public class P2PChatIn extends Thread {
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			while (true) {
-				if (!this.socket.isConnected()) {
-					this.socket.shutdownInput();
-					this.socket.shutdownOutput();
-					this.socket.close();
-					break;
-				}
 				char[] responseBuffer = new char[100];
 				br.read(responseBuffer);
 				String content = ServerLink.getUsefulContent(String.valueOf(responseBuffer));
+				if (content.length() == 0) {
+					break;
+				}
 				System.out.println(this.chatUser.username+":"+content);
-				this.chat.appendMessage(this.chatUser.username+":"+content);
+				this.chat.appendMessage(this.chatUser.username+":"+content);		
 				Thread.sleep(500);
 			}
 		} catch (IOException | InterruptedException e) {
@@ -67,6 +64,7 @@ public class P2PChatIn extends Thread {
 		if (ServerLink.frames.containsKey(this.chat.IP)) {
 			ServerLink.frames.remove(this.chat.IP);
 		}
+		this.chat.appendMessage(this.chatUser.username+" has disconnected the socket.");
 		System.out.println("succeed to release input thread!");
 	}
 }

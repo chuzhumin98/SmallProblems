@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -171,7 +172,7 @@ public class ServerLink {
 	 * 
 	 * @param logoutCommand
 	 */
-	public void logout(String logoutCommand) {
+	public boolean logout(String logoutCommand) {
 		try {
 			os.write(logoutCommand.getBytes("US-ASCII"));
 			System.out.println("succeed to send logout request!");
@@ -183,9 +184,15 @@ public class ServerLink {
 			}
 			String logoutResponse = String.valueOf(responseBuffer);
 			System.out.println(logoutResponse);
+			if (logoutResponse.substring(0,3).equals("loo")) {
+				return true;
+			} else {
+				return false;
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
@@ -382,18 +389,35 @@ public class ServerLink {
         logoutButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		try {
+        			for (Entry<String,JFrame> item: ServerLink.frames.entrySet()) {
+        				item.getValue().dispose(); //清空所有的JFrame资源
+        			}
         			for (int i = 0; i < ServerLink.sockets.size(); i++) { //注销时关闭所有的连接
             			if (ServerLink.sockets.get(i).isConnected()) {
-    						ServerLink.sockets.get(i).shutdownInput();
-    						ServerLink.sockets.get(i).shutdownOutput();
     						ServerLink.sockets.get(i).close();
             			}
             		}
         			ServerLink.sockets.clear();
+        			String logoutCommand = "logout"+ServerLink.currentStudent; //发送登出命令
+        			link.logout(logoutCommand);
+        			link.mainFrame.setVisible(false);
+        			link.welcomeFrame.setVisible(true); //打开欢迎界面
         		} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+        		try {
+    				ServerLink.this.socket = new Socket(ServerLink.serverIP, ServerLink.serverPort); //新建一个socket连接对象
+    				System.out.println("link server address:"+socket.getInetAddress());
+    				ServerLink.this.os = socket.getOutputStream(); //socket的输出流
+    				
+    				InputStream is = socket.getInputStream(); //socket的输入流
+    				InputStreamReader isr = new InputStreamReader(is);
+    				ServerLink.this.br = new BufferedReader(isr);
+    			} catch (IOException e1) {
+    				// TODO Auto-generated catch block
+    				e1.printStackTrace();
+    			} 
             }
         });
         

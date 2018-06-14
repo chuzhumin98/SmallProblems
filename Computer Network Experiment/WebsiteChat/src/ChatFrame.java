@@ -96,7 +96,17 @@ public class ChatFrame extends JFrame {
             }
         });
         
-        
+        this.addWindowListener(new WindowAdapter() {    	         	  
+        	public void windowClosing(WindowEvent e) {  
+        		super.windowClosing(e);  
+        		//如果对方用户已关闭，则杀死这个界面
+        		if (!ServerLink.cacheContents.containsKey(ChatFrame.this.IP)) {
+        			System.out.println("kill the chat frame with "+ChatFrame.this.IP);
+        			ChatFrame.this.dispose();
+        		}
+        	}  
+        	  
+        });  
         
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         this.getContentPane().add(titlePanel);
