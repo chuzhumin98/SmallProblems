@@ -13,11 +13,13 @@ public class P2PFileOut extends Thread {
 	public Socket socket; //socket通信对象
 	public ChatFrame chat; //聊天界面
 	public String outPath; //输出文件地址
+	public String IP; //IP地址
 	
 	public P2PFileOut(Socket socket, ChatFrame chat, String outPath) {
 		this.socket = socket;
 		this.chat = chat;
 		this.outPath = outPath;
+		this.IP = this.socket.getInetAddress().getHostAddress();
 	}
 	
 	public void run() {

@@ -1,8 +1,10 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -33,10 +35,10 @@ public class P2PChatOut extends Thread {
 	}
 	
 	public void run() {
-		OutputStream os;
+		BufferedWriter out;
 		System.out.println("succeed to chat with "+this.chatUser.username);
 		try {
-			os = socket.getOutputStream(); //socket的输出流
+			out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"));
 			while (true) {
 				sleep(500);
 				if (!ServerLink.cacheContents.containsKey(this.chat.IP)) { //找不到该键值，证明已断开连接
@@ -45,7 +47,9 @@ public class P2PChatOut extends Thread {
 				ArrayList<String> contents = ServerLink.cacheContents.get(this.chat.IP);
 				ServerLink.cacheContents.put(this.chat.IP, new ArrayList<String>());
 				for (int i = 0; i < contents.size(); i++) {
-					os.write(contents.get(i).getBytes("US-ASCII"));
+					String content = contents.get(i)+"\n";
+					out.write(content);
+					out.flush();
 					System.out.println("me:"+contents.get(i));
 					this.chat.appendMessage("me:"+contents.get(i));
 				}

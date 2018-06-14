@@ -92,7 +92,23 @@ public class ChatFrame extends JFrame {
                 filedialogSend.setVisible(true);
                 String fileopen = filedialogSend.getDirectory();// 返回文件对话框中显示的文件所属的目录  
                 String filename = filedialogSend.getFile();// 返回当前文件对话框中显示的文件名的字符串表示
-                System.out.println(fileopen+" "+filename);
+                if (fileopen != null && filename != null) {
+                	System.out.println("start to send the file "+fileopen+filename+" to "+IP);
+                	Socket fileSocket;
+					try {
+						fileSocket = new Socket(IP, MultiP2PFileServer.P2PPort); //新建一个与好友之间的socket连接对象
+						System.out.println("link server address:"+fileSocket.getInetAddress());
+						new P2PFileOut(fileSocket, ChatFrame.this, fileopen+filename).start(); //开启数据传输线程
+						ChatFrame.this.appendMessage("start to send file "+filename);
+					} catch (UnknownHostException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 			
+                }
+                //System.out.println(fileopen+" "+filename);
             }
         });
         

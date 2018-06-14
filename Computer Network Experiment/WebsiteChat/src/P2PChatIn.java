@@ -40,12 +40,9 @@ public class P2PChatIn extends Thread {
 		InputStream is; //socket的输入流
 		try {
 			is = socket.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
 			while (true) {
-				char[] responseBuffer = new char[100];
-				br.read(responseBuffer);
-				String content = ServerLink.getUsefulContent(String.valueOf(responseBuffer));
+				String content = br.readLine();
 				if (content.length() == 0) {
 					break;
 				}

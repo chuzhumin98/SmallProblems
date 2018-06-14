@@ -36,7 +36,7 @@ public class ServerLink {
 	public static String receiveFilePath = "D:\\"; //设置的默认接收文件路径
 	
 	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
-	public static Map<String,JFrame> frames = new HashMap<String,JFrame>(); //好友和对话框的对应关系
+	public static Map<String,ChatFrame> frames = new HashMap<String,ChatFrame>(); //好友和对话框的对应关系
 	
 	public static ArrayList<Socket> sockets = new ArrayList<Socket>(); //记录所有的连接，便于注销时全部关闭
 	
@@ -389,7 +389,7 @@ public class ServerLink {
         logoutButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		try {
-        			for (Entry<String,JFrame> item: ServerLink.frames.entrySet()) {
+        			for (Entry<String,ChatFrame> item: ServerLink.frames.entrySet()) {
         				item.getValue().dispose(); //清空所有的JFrame资源
         			}
         			for (int i = 0; i < ServerLink.sockets.size(); i++) { //注销时关闭所有的连接
@@ -434,6 +434,7 @@ public class ServerLink {
 	public static void main(String[] args) {
 		ServerLink link = ServerLink.getInstance();
 		new MultiP2PServer().start();
+		new MultiP2PFileServer().start();
 		
 		link.setMainFrame(link.mainFrame); //设置主界面
         link.setWelcomeFrame(link.welcomeFrame); //设置欢迎界面（登录）
