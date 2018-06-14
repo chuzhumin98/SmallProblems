@@ -35,6 +35,7 @@ public class ServerLink {
 	public static String receiveFilePath = "D:\\"; //设置的默认接收文件路径
 	
 	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
+	public static Map<String,JFrame> frames = new HashMap<String,JFrame>(); //好友和对话框的对应关系
 	
 	public static ServerLink link; //单子模式对象
 	
@@ -336,6 +337,7 @@ public class ServerLink {
     						new P2PChatIn(chatSocket, chat, friendId).start();
     						new P2PChatOut(chatSocket, chat, friendId).start();
     						ServerLink.cacheContents.put(IP, new ArrayList<String>());
+    						ServerLink.frames.put(IP, chat); //建立好友和聊天界面的对应关系
     					} catch (UnknownHostException e1) {
     						// TODO Auto-generated catch block
     						e1.printStackTrace();
@@ -345,6 +347,7 @@ public class ServerLink {
     					}         		
         			} else {
         				JOptionPane.showMessageDialog(f,"Your friend is online, continue to chat.");
+        				ServerLink.frames.get(IP).setVisible(true); //将该界面设为可见
         			}       				
         		} else if (IP.equals("n")) {
         			JOptionPane.showMessageDialog(f,"Sorry, but your friend isn't online.");
