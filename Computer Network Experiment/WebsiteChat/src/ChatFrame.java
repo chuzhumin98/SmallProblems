@@ -1,9 +1,12 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -75,6 +79,24 @@ public class ChatFrame extends JFrame {
         		}
             }
         });
+        
+        this.fileButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		FileDialog filedialogSend = new FileDialog(ChatFrame.this, "选择要发送的文件", FileDialog.LOAD);  
+                // 打开文件对话框适配器  
+                filedialogSend.addWindowListener(new WindowAdapter() {  
+                    public void windowClosing(WindowEvent e) {  
+                        filedialogSend.setVisible(false);  
+                    }  
+                });  
+                filedialogSend.setVisible(true);
+                String fileopen = filedialogSend.getDirectory();// 返回文件对话框中显示的文件所属的目录  
+                String filename = filedialogSend.getFile();// 返回当前文件对话框中显示的文件名的字符串表示
+                System.out.println(fileopen+" "+filename);
+            }
+        });
+        
+        
         
         this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
         this.getContentPane().add(titlePanel);

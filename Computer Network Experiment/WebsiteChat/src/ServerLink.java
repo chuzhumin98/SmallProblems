@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +31,8 @@ public class ServerLink {
 	//public static String serverIP = "localhost"; //服务器的IP地址
 	public static int serverPort = 8000; //服务器端的端口号
 	public static String studentID = "2015012158";
+	
+	public static String receiveFilePath = "D:\\"; //设置的默认接收文件路径
 	
 	public static Map<String,ArrayList<String>> cacheContents = new HashMap<String,ArrayList<String>>(); //缓存还未发送内容的哈希表
 	
@@ -83,6 +87,21 @@ public class ServerLink {
 		}
 		return content.substring(0, lastIdx+1);
 	}
+	
+	/**
+	 * 判断文件路径是否合法
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static boolean isExistFile(String path) {		 
+        if (null == path || "".equals(path.trim())) {
+            return false;
+        }
+        File targetFile = new File(path);
+        return targetFile.exists();
+    }
+ 
 	
 	/**
 	 * 用户登录系统
@@ -268,9 +287,15 @@ public class ServerLink {
         queryButton.setFont(new Font("黑体", Font.PLAIN, 15));
         JButton chatButton = new JButton("聊天");
         chatButton.setFont(new Font("黑体", Font.PLAIN, 15));
+        JButton fileButton = new JButton("更换路径");
+        fileButton.setFont(new Font("黑体", Font.PLAIN, 15));
+        JButton logoutButton = new JButton("注销");
+        logoutButton.setFont(new Font("黑体", Font.PLAIN, 15));
         buttonPanel.setLayout(new FlowLayout());
         buttonPanel.add(queryButton);
         buttonPanel.add(chatButton);
+        buttonPanel.add(fileButton);
+        buttonPanel.add(logoutButton);
         
         queryButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -304,7 +329,7 @@ public class ServerLink {
         			if (!ServerLink.cacheContents.containsKey(IP)) { //查看该用户是否已建立连接
         				JOptionPane.showMessageDialog(f,"Your friend is online, now send the chat request.");  			
             			try {
-    						Socket chatSocket = new Socket(IP, 7800); //新建一个与好友之间的socket连接对象
+    						Socket chatSocket = new Socket(IP, MultiP2PServer.P2PPort); //新建一个与好友之间的socket连接对象
     						System.out.println("link server address:"+chatSocket.getInetAddress());
     						ChatFrame chat = new ChatFrame(IP);
     						chat.setChatTitle(friendId);
@@ -329,7 +354,25 @@ public class ServerLink {
             }
         });
         
-        
+        fileButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		JFileChooser fileChooser = new JFileChooser(ServerLink.receiveFilePath); //选择文件夹对话框 
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+
+                int returnVal = fileChooser.showOpenDialog(fileChooser); 
+
+                if(returnVal == JFileChooser.APPROVE_OPTION) {
+                	String filePath= fileChooser.getSelectedFile().getAbsolutePath();//这个就是你选择的文件夹的
+                	if (ServerLink.isExistFile(filePath)) { //判断文件路径是否合法
+                		ServerLink.receiveFilePath = filePath;
+                		System.out.println("succeed to change file path:"+filePath);
+                	} else {
+                		JOptionPane.showMessageDialog(f,"The file path is invalid, please rechoose.");
+                	}
+                	
+                }
+            }
+        });
         
         f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS)); //不同panel之间纵向排列
         f.getContentPane().add(welcomePanel);
