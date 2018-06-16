@@ -67,7 +67,7 @@ def MLP(trainData, trainLabels, validateData, validateLabels=None):
     learing_rates = [0.001, 0.0005, 0.0002, 0.0001, 0.00005, 0.00002]
     iterNum = tf.placeholder(tf.int32)
     learing_rate = tf.train.piecewise_constant(iterNum, boundaries=boundaries, values=learing_rates)  # 学习率阶梯状下降
-    trainStep = tf.train.AdamOptimizer(learning_rate=learing_rate).minimize(loss)  # 采用Adam优化
+    trainStep = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)  # 采用Adam优化
     init = tf.global_variables_initializer()  # 变量的初始化
 
     batchGen = nextBatch(trainData, trainLabels, 50)  # 选取50的batch的生成器

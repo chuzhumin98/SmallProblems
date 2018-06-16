@@ -2,6 +2,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import BayesianRidge
 from sklearn.svm import LinearSVR
+from sklearn.svm import SVR
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from MLPv1 import MLP
@@ -15,7 +16,7 @@ def regressionMethod(trainData, trainLabels, testData, method=0, isSplit=False, 
         clf = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth)
     elif (method == 2 or method == 7):
         clf = BayesianRidge()
-    elif (method == 3):
+    elif (method == 3 or method == 8):
         clf = LinearSVR()
     elif (method == 4):
         if (not isSplit):
@@ -27,10 +28,12 @@ def regressionMethod(trainData, trainLabels, testData, method=0, isSplit=False, 
             registerPredict = MLP(trainData, np.log(trainLabels[:,1:2]+1), testData)
             registerPredict = np.exp(registerPredict[:,0])-1
             return casualPredict + registerPredict
-    elif (method == 8):
-        clf = GradientBoostingRegressor(n_estimators=n_estimators)
     elif (method == 9):
+        clf = GradientBoostingRegressor(n_estimators=n_estimators)
+    elif (method == 10):
         clf = KNeighborsRegressor()
+    elif (method == 11):
+        clf = SVR()
 
     if (method <= 3):
         if (not isSplit):

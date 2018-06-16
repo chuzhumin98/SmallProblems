@@ -72,36 +72,39 @@ def selectDecisionTreeDepth(data, labels, k):
 
 
 def selectRandomForestN(data, labels, k, max_depth=None):
-    Ns = range(1,51)
+    Ns = [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192]
     meanRMSLEs = np.zeros(len(Ns))
     stdRMSLEs = np.zeros(len(Ns))
-    for n in Ns:
+    for i in range(len(Ns)):
+        n = Ns[i]
         # split data for train and validate part: k-fold strategy
         generates = splitKfold(data, labels, k)  # split for 5-fold
         genitor = generates.__iter__()
         RMSLEs = np.zeros(k)
         # k-fold evaluate model
-        for i in range(k):
+        for j in range(k):
             trainData, trainLabels, validateData, validateLabels = genitor.__next__()
             predictLabels = regressionMethod(trainData, trainLabels, validateData, method=1, max_depth=max_depth, n_estimators=n)
-            RMSLEs[i] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
+            RMSLEs[j] = RMSLEevaluate(validateLabels[:, 2], predictLabels)
         print('n # ', n, 'average RMSLE = ', np.mean(RMSLEs),' variance = ',np.std(RMSLEs))
-        meanRMSLEs[n - 1] = np.mean(RMSLEs)
-        stdRMSLEs[n - 1] = np.std(RMSLEs)
+        meanRMSLEs[i] = np.mean(RMSLEs)
+        stdRMSLEs[i] = np.std(RMSLEs)
     plt.figure(2)
     plt.plot(Ns, meanRMSLEs, marker='.', c='b',linewidth=1.5, mfc='r',ms=10)
     plt.title('tree number vs RMSLE')
     plt.xlabel('tree number')
     plt.ylabel('mean of RMSLE')
+    plt.xscale('log')
     plt.grid()
-    plt.savefig('image/RF_number vs RMSLE.png', dpi=150)
+    plt.savefig('image/RF_number vs RMSLEv2.png', dpi=150)
 
     plt.figure(3)
     plt.plot(Ns, stdRMSLEs, marker='.', c='b',linewidth=1.5, mfc='r',ms=10)
     plt.title('tree number vs std(RMSLE)')
     plt.xlabel('tree number')
     plt.ylabel('std of RMSLE')
-    plt.savefig('image/RF_number vs std_RMSLE.png', dpi=150)
+    plt.xscale('log')
+    plt.savefig('image/RF_number vs std_RMSLEv2.png', dpi=150)
 
 
 
@@ -111,6 +114,7 @@ if __name__ == '__main__':
     df1 = pd.read_csv(trainFilePath, encoding='utf-8')
     data, labels = getStructureData(df1)
     data = getOneHotNormalizeData(data)
+    #data = getNormalizeData(data)
 
     #selectDecisionTreeDepth(data, labels, 5)
     #selectRandomForestN(data, labels, 5, 9)
@@ -123,7 +127,7 @@ if __name__ == '__main__':
     # k-fold evaluate model
     for i in range(k):
         trainData, trainLabels, validateData, validateLabels = genitor.__next__()
-        predictLabels = regressionMethod(trainData, trainLabels, validateData, isSplit=True, method=3) # max_depth = 9 is best
+        predictLabels = regressionMethod(trainData, trainLabels, validateData, isSplit=True, method=9, n_estimators=1000, max_depth=9) # max_depth = 9 is best
         predictLabels = np.maximum(predictLabels, 0)
         RMSLEs[i] = RMSLEevaluate(validateLabels[:,2], predictLabels)
     print('K-fold RMSLE = ',RMSLEs, ' average RMSLE = ',np.mean(RMSLEs),' std = ',np.std(RMSLEs))

@@ -55,7 +55,7 @@ def getNormalizeData(data):
     for i in range(feature):
         minValue = min(data[:, i])
         maxValue = max(data[:, i])
-        newData[:, i] = (newData[:, i] - minValue) / (maxValue - minValue)
+        newData[:, i] = (data[:, i] - minValue) / (maxValue - minValue)
     return newData
 
 if __name__ == '__main__':
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     print(leftCount)
 
 
-    '''
+
     plt.figure(0)
     plt.scatter(hours[df1['workingday'] == 0], df1['count'].loc[df1['workingday'] == 0], marker='x',c='r')
     plt.scatter(hours[df1['workingday'] == 1], df1['count'].loc[df1['workingday'] == 1], marker='x', c='g')
@@ -90,8 +90,10 @@ if __name__ == '__main__':
     plt.xlabel('hour')
     plt.ylabel('count')
     plt.title('hour vs count')
+    plt.legend(['weekend','workingday'], loc='upper left')
     plt.savefig('image/hour vs countv2.png',dpi=150)
 
+    '''
     plt.figure(1)
     plt.scatter(df1['temp'], df1['count'],marker='.')
     plt.xlabel('temperature')
