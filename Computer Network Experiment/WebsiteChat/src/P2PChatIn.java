@@ -43,7 +43,7 @@ public class P2PChatIn extends Thread {
 			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
 			while (true) {
 				String content = br.readLine();
-				if (content.length() == 0) {
+				if (content == null || content.length() == 0) {
 					break;
 				}
 				System.out.println(this.chatUser.username+":"+content);
@@ -65,3 +65,4 @@ public class P2PChatIn extends Thread {
 		System.out.println("succeed to release input thread!");
 	}
 }
+

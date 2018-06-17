@@ -61,3 +61,4 @@ public class P2PChatOut extends Thread {
 		System.out.println("succeed to release output thread!");
 	}
 }
+

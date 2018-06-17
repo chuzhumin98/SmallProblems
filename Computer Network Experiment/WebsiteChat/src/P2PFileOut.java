@@ -31,7 +31,7 @@ public class P2PFileOut extends Thread {
             dis=new DataInputStream(new BufferedInputStream(new FileInputStream(this.outPath)));  
             
             int buffferSize=1024;  
-            byte[]bufArray=new byte[buffferSize];  
+            byte[] bufArray=new byte[buffferSize];  
             dos.writeUTF(file.getName());   
             dos.flush();   
             dos.writeLong((long) file.length());   

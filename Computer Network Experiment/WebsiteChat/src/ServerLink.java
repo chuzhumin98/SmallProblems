@@ -154,11 +154,15 @@ public class ServerLink {
 				System.err.println("cannot recieve query message from server!");
 			}
 			String queryResponse = String.valueOf(responseBuffer);
+			System.out.println(queryResponse);
 			if ((queryResponse.charAt(0) < '0' || queryResponse.charAt(0) > '9')
 					&& (queryResponse.charAt(0) != '.' )) {
-				System.err.println("the query user isn't online");
-			}
-			System.out.println(queryResponse);
+				if (queryResponse.charAt(0) == 'n') {
+					System.err.println("Your friend isn't online!");
+				} else {
+					System.err.println(ServerLink.getUsefulContent(queryResponse));
+				}
+			}		
 			return ServerLink.getUsefulContent(queryResponse);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -226,7 +230,7 @@ public class ServerLink {
         passPanel.setLayout(new FlowLayout());
         passPanel.add(passLabel);
         passPanel.add(passField);
-        passField.setText("net2018"); //为方便测试，直接输好密码
+        //passField.setText("net2018"); //为方便测试，直接输好密码
         
         //登录按钮
         JPanel buttonPanel = new JPanel();
@@ -377,7 +381,7 @@ public class ServerLink {
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                 	String filePath= fileChooser.getSelectedFile().getAbsolutePath();//这个就是你选择的文件夹的
                 	if (ServerLink.isExistFile(filePath)) { //判断文件路径是否合法
-                		ServerLink.receiveFilePath = filePath;
+                		ServerLink.receiveFilePath = filePath+"\\";
                 		System.out.println("succeed to change file path:"+filePath);
                 	} else {
                 		JOptionPane.showMessageDialog(f,"The file path is invalid, please rechoose.");
@@ -398,6 +402,8 @@ public class ServerLink {
             			}
             		}
         			ServerLink.sockets.clear();
+        			ServerLink.cacheContents.clear();
+        			ServerLink.frames.clear();
         			String logoutCommand = "logout"+ServerLink.currentStudent; //发送登出命令
         			link.logout(logoutCommand);
         			link.mainFrame.setVisible(false);
@@ -432,6 +438,14 @@ public class ServerLink {
 	
 	
 	public static void main(String[] args) {
+		if (args.length >= 1) {
+			ServerLink.serverIP = args[0]; //设置连接服务器的IP地址
+		}
+		
+		if (args.length >= 2) {
+			ServerLink.serverPort = Integer.valueOf(args[1]); //设置连接的端口号
+		}
+		
 		ServerLink link = ServerLink.getInstance();
 		new MultiP2PServer().start();
 		new MultiP2PFileServer().start();
